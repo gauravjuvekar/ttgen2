@@ -63,3 +63,6 @@ class Schedule(object):
             self.swap(
                 random.randrange(self._n_slots),
                 random.randrange(self._n_slots))
+
+    def fitness(self):
+        pass
