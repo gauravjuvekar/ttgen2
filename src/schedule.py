@@ -114,17 +114,19 @@ class Schedule(object):
             self.swap(swap1, swap2)
 
     def shuffle_swap(self, slot1, slot2):
-        time_1, room_1 = self.slot_indices(slot1)
-        time_2, room_2 = self.slot_indices(slot2)
+        slot1 = self.slot_indices(slot1)
+        slot2 = self.slot_indices(slot2)
 
         """ Need to shuffle all the slots between the two points"""
-        shuffled_part = self.slots[time_1:time_2][room_1:room_2]
+        shuffled_part = self.slots[
+            slot1.time:slot2.time][slot1.room:slot2.room]
         random.shuffle(shuffled_part)
-        self.slots[time_1:time_2][room_1:room_2] = shuffled_part
+        self.slots[slot1.time:slot2.time][slot1.room:slot2.room] = (
+            shuffled_part)
 
-        for time, room in ((time_1, room_1), (time_2, room_2)):
-            if self.slots[time][room] is not None:
-                self.allocation_maps[self.slots[time][room]] = (time, room)
+        for slot in (slot1, slot2):
+            if self.slots[slot.time][slot.room] is not None:
+                self.allocation_maps[self.slots[slot.time][slot.room]] = slot
 
     def mutate3(self, count):
         """ Shuffling randomly between two points """
