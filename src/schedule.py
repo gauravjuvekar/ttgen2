@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 import random
 import copy
+from collections import namedtuple
 
 
 class Schedule(object):
+    SlotIndex = namedtuple('SlotIndex', ['time', 'room'])
+
     @classmethod
     def from_Schedule(self, schedule):
         """
@@ -33,27 +36,32 @@ class Schedule(object):
         choices = list(range(self._n_slots))
         random.shuffle(choices)
         for alloc, slot in zip(self.allocations, choices):
-            time, room = self.slot_indices(slot)
-            self.slots[time][room] = alloc
-            self.allocation_maps[alloc] = (time, room)
+            slot = self.slot_indices(slot)
+            self.slots[slot.time][slot.room] = alloc
+            self.allocation_maps[alloc] = slot
 
     def slot_indices(self, slot):
         """
         Gives the indices for self.slots[][] as a tuple of (time, room)
         """
-        return (slot // self._n_rooms, slot % self._n_rooms)
+        return self.SlotIndex(
+            time=(slot // self._n_rooms),
+            room=(slot % self._n_rooms))
 
     def swap(self, slot1, slot2):
         """
         Swaps the allocations between two slots
         """
-        time_1, room_1 = self.slot_indices(slot1)
-        time_2, room_2 = self.slot_indices(slot2)
-        self.slots[time_1][room_1], self.slots[time_2][room_2] = (
-            self.slots[time_2][room_2], self.slots[time_1][room_1])
-        for time, room in ((time_1, room_1), (time_2, room_2)):
-            if self.slots[time][room] is not None:
-                self.allocation_maps[self.slots[time][room]] = (time, room)
+        slot1 = self.slot_indices(slot1)
+        slot2 = self.slot_indices(slot2)
+        self.slots[slot1.time][slot1.room],
+        self.slots[slot2.time][slot2.room] = (
+            self.slots[slot2.time][slot2.room],
+            self.slots[slot1.time][slot1.room])
+        for slot in (slot1, slot2):
+            if self.slots[slot.time][slot.room] is not None:
+                self.allocation_maps[self.slots[slot.time][slot.room]] = slot
+
 
     def mutate(self, count):
         """
