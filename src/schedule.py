@@ -65,4 +65,34 @@ class Schedule(object):
                 random.randrange(self._n_slots))
 
     def fitness(self):
-        pass
+        penalties = dict()
+        penalties['clash_time_teacher'] = -1000
+        penalties['clash_time_batch'] = -1000
+
+        fitness = 0
+
+        # teacher time clashes
+        for time_slot in self.slots:
+            teachers = dict()
+            for allocation in time_slot:
+                try:
+                    teachers[allocation.teacher] += 1
+                except KeyError:
+                    teachers[allocation.teacher] = 1
+            violations = sum((
+                (count - 1) for count in teachers.values() if count > 1))
+            fitness += violations * penalties['clash_time_teacher']
+
+        # batches time clashes
+        for time_slot in self.slots:
+            batches = dict()
+            for allocation in time_slot:
+                try:
+                    batches[allocation.batch] += 1
+                except KeyError:
+                    batches[allocation.batch] = 1
+            violations = sum((
+                (count - 1) for count in batches.values() if count > 1))
+            fitness += violations * penalties['clash_time_batch']
+
+        return fitness
