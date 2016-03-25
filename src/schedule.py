@@ -84,7 +84,6 @@ class Schedule(object):
         p2_time_1, p2_room_1 = Schedule_2.slot_indices(slot1)
         p2_time_2, p2_room_2 = Schedule_2.slot_indices(slot2)
 
- 
 
         for time, room in ((p2_time_1, p2_room_1), (p2_time_2, p2_room_2)):
             if Schedule_2.slots[time][room] is not None:
