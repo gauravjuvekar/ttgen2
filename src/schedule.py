@@ -65,7 +65,7 @@ class Schedule(object):
                 random.randrange(self._n_slots))
 
 
-    def swap_chunk(self, slot1, slot2, Schedule1, Schedule2):
+    def swap_chunk(self, slot1, slot2, Schedule_1, Schedule_2):
         """
         Swap the chunk of allocations between the two 
         indices crossover1(slot1) & crossover2(slot2)
@@ -75,24 +75,24 @@ class Schedule(object):
 
         """
 
-        child1 = from_Schedule(Schedule1)
-        child2 = from_Schedule(Schedule2)
+        child1 = from_Schedule(Schedule_1)
+        child2 = from_Schedule(Schedule_2)
 
-        p1_time_1, p1_room_1 = Schedule1.slot_indices(slot1)
-        p1_time_2, p1_room_2 = Schedule1.slot_indices(slot2)    
+        p1_time_1, p1_room_1 = Schedule_1.slot_indices(slot1)
+        p1_time_2, p1_room_2 = Schedule_1.slot_indices(slot2)    
 
-        p2_time_1, p2_room_1 = Schedule2.slot_indices(slot1)
-        p2_time_2, p2_room_2 = Schedule2.slot_indices(slot2)
+        p2_time_1, p2_room_1 = Schedule_2.slot_indices(slot1)
+        p2_time_2, p2_room_2 = Schedule_2.slot_indices(slot2)
 
  
 
         for time, room in ((p2_time_1, p2_room_1), (p2_time_2, p2_room_2)):
-            if Schedule2.slots[time][room] is not None:
-                child1.allocation_maps[Schedule2.slots[time][room]] = (time, room)
+            if Schedule_2.slots[time][room] is not None:
+                child1.allocation_maps[Schedule_2.slots[time][room]] = (time, room)
 
         for time, room in ((p1_time_1, p1_room_1), (p1_time_2, p1_room_2)):
-            if Schedule1.slots[time][room] is not None:
-                child2.allocation_maps[Schedule1.slots[time][room]] = (time, room)
+            if Schedule_1.slots[time][room] is not None:
+                child2.allocation_maps[Schedule_1.slots[time][room]] = (time, room)
 
 
         return child1, child2
@@ -108,12 +108,9 @@ class Schedule(object):
         crossover1 = random.randrange(self._n_slots)
         crossover2 = random.randrange(crossover1, self._n_slots)
 
-        Schedule1 = Schedule_1
-        Schedule2 = Schedule_2
-
-
+    
         for swap_chunk in range(count):
-            swap_chunk(crossover1, crossover2, Schedule1, Schedule2)        
+            swap_chunk(crossover1, crossover2, Schedule_1, Schedule_2)        
 
 
 
