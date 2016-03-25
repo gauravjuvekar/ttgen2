@@ -92,6 +92,7 @@ class Schedule(object):
         chunk1, chunk2 = chunk2, chunk1
 
 
+    
     def crossover(self, count):
         """
         Combine two parent allocations into two offsprings
