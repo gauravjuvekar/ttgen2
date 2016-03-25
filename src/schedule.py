@@ -64,7 +64,8 @@ class Schedule(object):
                 random.randrange(self._n_slots),
                 random.randrange(self._n_slots))
 
-    def swap_chunk(self, slot1, slot2):
+
+    def swap_chunk(self, slot1, slot2, Schedule1, Schedule2):
         """
         Swap the chunk of allocations between the two 
         indices crossover1(slot1) & crossover2(slot2)
@@ -74,26 +75,30 @@ class Schedule(object):
 
         """
 
-        parent1 = Schedule()
-        parent2 = Schedule()
+        child1 = from_Schedule(Schedule1)
+        child2 = from_Schedule(Schedule2)
 
-        child1 = from_Schedule(parent1)
-        child2 = from_Schedule(parent2)
+        p1_time_1, p1_room_1 = Schedule1.slot_indices(crossover1)
+        p1_time_2, p1_room_2 = Schedule1.slot_indices(crossover2)    
 
-        p1_time_1, p1_room_1 = parent1.slot_indices(crossover1)
-        p1_time_2, p1_room_2 = parent1.slot_indices(crossover2)    
+        p2_time_1, p2_room_1 = Schedule2.slot_indices(crossover1)
+        p2_time_2, p2_room_2 = Schedule2.slot_indices(crossover2)
 
-        p2_time_1, p2_room_1 = parent2.slot_indices(crossover1)
-        p2_time_2, p2_room_2 = parent2.slot_indices(crossover2)
+ 
 
-        chunk1 = parent1.slots[p1_time_1:p1_time_2][p1_room_1:p1_room_2]
-        chunk2 = parent2.slots[p2_time_1:p2_time_2][p2_room_1:p2_room_2]
-    
-        chunk1, chunk2 = chunk2, chunk1
+        for time, room in ((p2_time_1, p2_room_1), (p2_time_2, p2_room_2)):
+            if Schedule2.slots[time][room] is not None:
+                child1.allocation_maps[Schedule2.slots[time][room]] = (time, room)
+
+        for time, room in ((p1_time_1, p1_room_1), (p1_time_2, p1_room_2)):
+            if Schedule1.slots[time][room] is not None:
+                child2.allocation_maps[Schedule1.slots[time][room]] = (time, room)
 
 
-    
-    def crossover(self, count):
+        return child1, child2
+
+
+    def crossover(self, Schedule_1, Schedule_2, count):
         """
         Combine two parent allocations into two offsprings
         by swapping randomly determined chunk.
@@ -103,8 +108,15 @@ class Schedule(object):
         crossover1 = random.randrange(self._n_slots)
         crossover2 = random.randrange(crossover1, self._n_slots)
 
+        Schedule1 = Schedule_1
+        Schedule2 = Schedule_2
+
+
         for swap_chunk in range(count):
-            swap_chunk(crossover1, crossover2)        
+            swap_chunk(crossover1, crossover2, Schedule1, Schedule2)        
+
+
+
 
 
 
