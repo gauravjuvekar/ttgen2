@@ -78,11 +78,11 @@ class Schedule(object):
         child1 = from_Schedule(Schedule1)
         child2 = from_Schedule(Schedule2)
 
-        p1_time_1, p1_room_1 = Schedule1.slot_indices(crossover1)
-        p1_time_2, p1_room_2 = Schedule1.slot_indices(crossover2)    
+        p1_time_1, p1_room_1 = Schedule1.slot_indices(slot1)
+        p1_time_2, p1_room_2 = Schedule1.slot_indices(slot2)    
 
-        p2_time_1, p2_room_1 = Schedule2.slot_indices(crossover1)
-        p2_time_2, p2_room_2 = Schedule2.slot_indices(crossover2)
+        p2_time_1, p2_room_1 = Schedule2.slot_indices(slot1)
+        p2_time_2, p2_room_2 = Schedule2.slot_indices(slot2)
 
  
 
