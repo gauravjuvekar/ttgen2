@@ -64,46 +64,46 @@ class Schedule(object):
                 random.randrange(self._n_slots),
                 random.randrange(self._n_slots))
 
-def swap_chunk(self, slot1, slot2):
-    """
-    Swap the chunk of allocations between the two 
-    indices crossover1(slot1) & crossover2(slot2)
-    of two parent allocations.
+    def swap_chunk(self, slot1, slot2):
+        """
+        Swap the chunk of allocations between the two 
+        indices crossover1(slot1) & crossover2(slot2)
+        of two parent allocations.
 
-    The parents are cloned to form the children.
+        The parents are cloned to form the children.
 
-    """
+        """
 
-    parent1 = Schedule()
-    parent2 = Schedule()
+        parent1 = Schedule()
+        parent2 = Schedule()
 
-    child1 = from_Schedule(parent1)
-    child2 = from_Schedule(parent2)
+        child1 = from_Schedule(parent1)
+        child2 = from_Schedule(parent2)
 
-    p1_time_1, p1_room_1 = parent1.slot_indices(crossover1)
-    p1_time_2, p1_room_2 = parent1.slot_indices(crossover2)    
+        p1_time_1, p1_room_1 = parent1.slot_indices(crossover1)
+        p1_time_2, p1_room_2 = parent1.slot_indices(crossover2)    
 
-    p2_time_1, p2_room_1 = parent2.slot_indices(crossover1)
-    p2_time_2, p2_room_2 = parent2.slot_indices(crossover2)
+        p2_time_1, p2_room_1 = parent2.slot_indices(crossover1)
+        p2_time_2, p2_room_2 = parent2.slot_indices(crossover2)
 
-    chunk1 = parent1.slots[p1_time_1:p1_time_2][p1_room_1:p1_room_2]
-    chunk2 = parent2.slots[p2_time_1:p2_time_2][p2_room_1:p2_room_2]
+        chunk1 = parent1.slots[p1_time_1:p1_time_2][p1_room_1:p1_room_2]
+        chunk2 = parent2.slots[p2_time_1:p2_time_2][p2_room_1:p2_room_2]
     
-    chunk1, chunk2 = chunk2, chunk1
+        chunk1, chunk2 = chunk2, chunk1
 
 
-def crossover(self, count):
-    """
-    Combine two parent allocations into two offsprings
-    by swapping randomly determined chunk.
+    def crossover(self, count):
+        """
+        Combine two parent allocations into two offsprings
+        by swapping randomly determined chunk.
 
-    """
+        """
 
-    crossover1 = random.randrange(self._n_slots)
-    crossover2 = random.randrange(crossover1, self._n_slots)
+        crossover1 = random.randrange(self._n_slots)
+        crossover2 = random.randrange(crossover1, self._n_slots)
 
-    for swap_chunk in range(count):
-        swap_chunk(crossover1, crossover2)        
+        for swap_chunk in range(count):
+            swap_chunk(crossover1, crossover2)        
 
 
 
