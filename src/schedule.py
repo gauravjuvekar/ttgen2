@@ -162,6 +162,7 @@ def swap_chunk(self, cross_point_1, cross_point_2, Schedule_1, Schedule_2):
 
     child_1 = from_Schedule(Schedule_1)
     child_2 = from_Schedule(Schedule_2)
+    cross_point_1, cross_point_2 = min(cross_point_1, cross_point_2), max(cross_point_1, cross_point_2)
     for slot_number in range(cross_point_1, cross_point_2 + 1):
             swap_between(child_1, child_2, slot_number)
     return child1, child2
