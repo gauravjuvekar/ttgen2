@@ -136,51 +136,46 @@ class Schedule(object):
             while(swap2 == swap1):
                 swap2 = random.randrange(self._n_slots)
         self.shuffle_swap(self, swap1, swap2)
-    def Crossover():
-        pass
 
-    def swap_chunk(self, slot1, slot2, Schedule_1, Schedule_2):
-        """
-        Swap the chunk of allocations between the two
-        indices crossover1(slot1) & crossover2(slot2)
-        of two parent allocations.
+def swap_between(child_1, child_2, slot_number):
+    slot1 = child_1.slot_indices(slot_number)
+    slot2 = child_2.slot_indices(slot_number)
+    child_1.slots[slot1.time][slot1.room],
+    child_2.slots[slot2.time][slot2.room] = (
+        child_2.slots[slot2.time][slot2.room],
+        child_1.slots[slot1.time][slot1.room])
+    #for slot in (slot1, slot2):
+    if child_1.slots[slot1.time][slot1.room] is not None:
+        child_1.allocation_maps[child_1.slots[slot1.time][slot1.room]] = slot1
+    if child_2.slots[slot2.time][slot2.room] is not None:
+        child_2.allocation_maps[child_2.slots[slot2.time][slot2.room]] = slot2
 
-        The parents are cloned to form the children.
+def swap_chunk(self, cross_point_1, cross_point_2, Schedule_1, Schedule_2):
+    """
+    Swap the chunk of allocations between the two
+    indices crossover1(slot1) & crossover2(slot2)
+    of two parent allocations.
 
-        """
+    The parents are cloned to form the children.
 
-        child1 = from_Schedule(Schedule_1)
-        child2 = from_Schedule(Schedule_2)
+    """
 
-        p1_time_1, p1_room_1 = Schedule_1.slot_indices(slot1)
-        p1_time_2, p1_room_2 = Schedule_1.slot_indices(slot2)
-
-        p2_time_1, p2_room_1 = Schedule_2.slot_indices(slot1)
-        p2_time_2, p2_room_2 = Schedule_2.slot_indices(slot2)
-
-
-        for time, room in range((p2_time_1, p2_room_1), ((p2_time_2 + 1), (p2_room_2 + 1))):
-            if Schedule_2.slots[time][room] is not None:
-                child1.allocation_maps[Schedule_2.slots[time][room]] = (time, room)
-
-        for time, room in range((p1_time_1, p1_room_1), ((p1_time_2 + 1), (p1_room_2 + 1))):
-            if Schedule_1.slots[time][room] is not None:
-                child2.allocation_maps[Schedule_1.slots[time][room]] = (time, room)
-
-
-        return child1, child2
+    child_1 = from_Schedule(Schedule_1)
+    child_2 = from_Schedule(Schedule_2)
+    for slot_number in range(cross_point_1, cross_point_2 + 1):
+            swap_between(child_1, child_2, slot_number)
+    return child1, child2
 
 
-    def crossover(self, Schedule_1, Schedule_2, count):
-        """
-        Combine two parent allocations into two offsprings
-        by swapping randomly determined chunk.
+def crossover(self, Schedule_1, Schedule_2, count):
+    """
+    Combine two parent allocations into two offsprings
+    by swapping randomly determined chunk.
+    """
+    cross_point_1 = random.randrange(self._n_slots)
+    cross_point_2 = random.randrange(self._n_slots)
+    while(cross_point_1 == cross_point_2):
+        cross_point_2 = random.randrange(self._n_slots)
 
-        """
+    swap_chunk(cross_point_1, cross_point_2, Schedule_1, Schedule_2)
 
-        crossover1 = random.randrange(self._n_slots)
-        crossover2 = random.randrange(crossover1 + 1, self._n_slots + 1)
-
-
-        for swap_chunk in range(count):
-            swap_chunk(crossover1, crossover2, Schedule_1, Schedule_2)
