@@ -105,7 +105,7 @@ class Schedule(object):
         """
 
         crossover1 = random.randrange(self._n_slots)
-        crossover2 = random.randrange(crossover1, self._n_slots)
+        crossover2 = random.randrange(crossover1 + 1, self._n_slots + 1)
 
     
         for swap_chunk in range(count):
