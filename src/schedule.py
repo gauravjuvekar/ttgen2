@@ -136,3 +136,5 @@ class Schedule(object):
             while(swap2 == swap1):
                 swap2 = random.randrange(self._n_slots)
         self.shuffle_swap(self, swap1, swap2)
+    def Crossover():
+        pass
