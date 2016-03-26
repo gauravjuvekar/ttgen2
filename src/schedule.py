@@ -85,11 +85,11 @@ class Schedule(object):
         p2_time_2, p2_room_2 = Schedule_2.slot_indices(slot2)
 
 
-        for time, room in ((p2_time_1, p2_room_1), (p2_time_2, p2_room_2)):
+        for time, room in range((p2_time_1, p2_room_1), ((p2_time_2 + 1), (p2_room_2 + 1))):
             if Schedule_2.slots[time][room] is not None:
                 child1.allocation_maps[Schedule_2.slots[time][room]] = (time, room)
 
-        for time, room in ((p1_time_1, p1_room_1), (p1_time_2, p1_room_2)):
+        for time, room in range((p1_time_1, p1_room_1), ((p1_time_2 + 1), (p1_room_2 + 1))):
             if Schedule_1.slots[time][room] is not None:
                 child2.allocation_maps[Schedule_1.slots[time][room]] = (time, room)
 
