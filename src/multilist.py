@@ -17,18 +17,16 @@ class MultiList(object):
 
     def __getitem__(self, index):
         if isinstance(index, slice):
-            return self._list[
-                self.int_index(index.start):
-                self.int_index(index.end):
-                index.step]
+            start = self.int_index(index.start) if index is not None else None
+            end = self.int_index(index.end) if index is not None else None
+            return self._list[start:end:index.step]
         else:
             return self._list[self.int_index(index)]
 
     def __setitem__(self, index, value):
         if isinstance(index, slice):
-            self._list[
-                self.int_index(index.start):
-                self.int_index(index.end):
-                index.step] = value
+            start = self.int_index(index.start) if index is not None else None
+            end = self.int_index(index.end) if index is not None else None
+            self._list[start:end:index.step] = value
         else:
             self._list[self.int_index(index)] = value
