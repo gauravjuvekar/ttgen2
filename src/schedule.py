@@ -3,6 +3,8 @@ import random
 import copy
 from collections import namedtuple
 
+import multilist
+
 
 class Schedule(object):
     SlotIndex = namedtuple('SlotIndex', ['time', 'room'])
@@ -25,7 +27,7 @@ class Schedule(object):
         self._n_rooms = n_rooms
         self._n_times = n_times
         self._n_slots = n_times * n_rooms
-        self.slots = [[None] * n_rooms for _ in n_times]
+        self.slots = multilist.MultiList(n_rooms, n_times)
         self.allocations = allocations
         self.allocation_maps = dict()
 
@@ -36,8 +38,7 @@ class Schedule(object):
         choices = list(range(self._n_slots))
         random.shuffle(choices)
         for alloc, slot in zip(self.allocations, choices):
-            slot = self.slot_indices(slot)
-            self.slots[slot.time][slot.room] = alloc
+            self.slots[slot] = alloc
             self.allocation_maps[alloc] = slot
 
     def slot_indices(self, slot):
