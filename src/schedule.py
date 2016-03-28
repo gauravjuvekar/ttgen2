@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import random
-import copy
 from collections import namedtuple
 
 import multilist
@@ -10,16 +9,18 @@ class Schedule(object):
     SlotIndex = namedtuple('SlotIndex', ['time', 'room'])
 
     @classmethod
-    def from_Schedule(self, schedule):
+    def from_Schedule(cls, schedule):
         """
         Clone a Schedule
         """
-        self._n_rooms = copy.deepcopy(schedule._n_rooms)
-        self._n_times = copy.deepcopy(schedule._n_times)
-        self._n_slots = copy.deepcopy(schedule._n_slots)
-        self.slots = copy.deepcopy(schedule.slots)
-        self.allocations = copy.copy(schedule.allocations)
-        self.allocation_maps = copy.copyallocation_maps
+        self = cls.__new__(cls)
+        self._n_rooms = schedule._n_rooms
+        self._n_times = schedule._n_times
+        self._n_slots = schedule._n_slots
+        self.slots = schedule.slots[:]
+        self.allocations = schedule.allocations
+        self.allocation_maps = schedule.allocation_maps.copy()
+        return self
 
     def __init__(self, n_times, n_rooms, allocations):
         if n_times * n_rooms < len(allocations):
