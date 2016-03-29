@@ -78,20 +78,20 @@ class Schedule(object):
         child1 = from_Schedule(Schedule_1)
         child2 = from_Schedule(Schedule_2)
 
-        p1_time_1, p1_room_1 = Schedule_1.slot_indices(slot1)
-        p1_time_2, p1_room_2 = Schedule_1.slot_indices(slot2)    
+        Slot_index_1 = p1_time_1, p1_room_1 = Schedule_1.slot_indices(slot1)
+        Slot_index_2 = p1_time_2, p1_room_2 = Schedule_1.slot_indices(slot2)    
 
-        p2_time_1, p2_room_1 = Schedule_2.slot_indices(slot1)
-        p2_time_2, p2_room_2 = Schedule_2.slot_indices(slot2)
+        Slot_index_3 = p2_time_1, p2_room_1 = Schedule_2.slot_indices(slot1)
+        Slot_index_4 = p2_time_2, p2_room_2 = Schedule_2.slot_indices(slot2)
 
 
-        for time, room in range((p2_time_1, p2_room_1), ((p2_time_2 + 1), (p2_room_2 + 1))):
-            if Schedule_2.slots[time][room] is not None:
-                child1.allocation_maps[Schedule_2.slots[time][room]] = (time, room)
+        for slot_index in range(Slot_index_3, Slot_index_4 + 1):
+            if Schedule_2.slots[slot_index] is not None:
+                child1.allocation_maps[Schedule_2.slots[slot_index]] = slot_index
 
-        for time, room in range((p1_time_1, p1_room_1), ((p1_time_2 + 1), (p1_room_2 + 1))):
-            if Schedule_1.slots[time][room] is not None:
-                child2.allocation_maps[Schedule_1.slots[time][room]] = (time, room)
+        for slot_index in range(Slot_index_1, Slot_index_2 + 1):
+            if Schedule_1.slots[slot_index] is not None:
+                child2.allocation_maps[Schedule_1.slots[slot_index]] = slot_index
 
 
         return child1, child2
