@@ -25,7 +25,7 @@ def Population_evolve(self, Population, Schedule, generations, fitness):
     Population =  Population.sort(reverse=True, key = Schedule.fitness())
     max_fitness = float("-inf")
     elapsed_generations = 0
-    while(max_fitness < fitness && elapsed_generations < generations):
+    while(max_fitness < fitness and elapsed_generations < generations):
         del Population[-1]
         del Population[-2]
         crossover(Population[0], Population[1])
