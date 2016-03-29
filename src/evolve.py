@@ -26,7 +26,7 @@ def Population_evolve(self, Population, Schedule, generations, fitness):
 
     """
 
-    Population =  Population.sort(reverse=True, key = Schedule.fitness())
+    Population =  Population.sort(reverse=True, key = Schedule.fitness)
     max_fitness = Population[0].fitness
     elapsed_generations = 0
     while(max_fitness < fitness and elapsed_generations < generations):
