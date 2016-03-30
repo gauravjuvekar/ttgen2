@@ -138,3 +138,47 @@ class Schedule(object):
             while(swap2 == swap1):
                 swap2 = random.randrange(self._n_slots)
         self.shuffle_swap(self, swap1, swap2)
+
+def swap_between(child_1, child_2, slot_number):
+    slot1 = child_1.slot_indices(slot_number)
+    slot2 = child_2.slot_indices(slot_number)
+    child_1.slots[slot1.time][slot1.room],
+    child_2.slots[slot2.time][slot2.room] = (
+        child_2.slots[slot2.time][slot2.room],
+        child_1.slots[slot1.time][slot1.room])
+    #for slot in (slot1, slot2):
+    if child_1.slots[slot1.time][slot1.room] is not None:
+        child_1.allocation_maps[child_1.slots[slot1.time][slot1.room]] = slot1
+    if child_2.slots[slot2.time][slot2.room] is not None:
+        child_2.allocation_maps[child_2.slots[slot2.time][slot2.room]] = slot2
+
+def swap_chunk(self, cross_point_1, cross_point_2, Schedule_1, Schedule_2):
+    """
+    Swap the chunk of allocations between the two
+    indices crossover1(slot1) & crossover2(slot2)
+    of two parent allocations.
+
+    The parents are cloned to form the children.
+
+    """
+
+    child_1 = from_Schedule(Schedule_1)
+    child_2 = from_Schedule(Schedule_2)
+    cross_point_1, cross_point_2 = min(cross_point_1, cross_point_2), max(cross_point_1, cross_point_2)
+    for slot_number in range(cross_point_1, cross_point_2 + 1):
+            swap_between(child_1, child_2, slot_number)
+    return child1, child2
+
+
+def crossover(self, Schedule_1, Schedule_2, count):
+    """
+    Combine two parent allocations into two offsprings
+    by swapping randomly determined chunk.
+    """
+    cross_point_1 = random.randrange(self._n_slots)
+    cross_point_2 = random.randrange(self._n_slots)
+    while(cross_point_1 == cross_point_2):
+        cross_point_2 = random.randrange(self._n_slots)
+
+    swap_chunk(cross_point_1, cross_point_2, Schedule_1, Schedule_2)
+
