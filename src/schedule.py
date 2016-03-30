@@ -54,15 +54,12 @@ class Schedule(object):
         """
         Swaps the allocations between two slots
         """
-        slot1 = self.slot_indices(slot1)
-        slot2 = self.slot_indices(slot2)
-        self.slots[slot1.time][slot1.room],
-        self.slots[slot2.time][slot2.room] = (
-            self.slots[slot2.time][slot2.room],
-            self.slots[slot1.time][slot1.room])
+        self.slots[slot1], self.slots[slot2] = (
+            self.slots[slot2],
+            self.slots[slot1])
         for slot in (slot1, slot2):
-            if self.slots[slot.time][slot.room] is not None:
-                self.allocation_maps[self.slots[slot.time][slot.room]] = slot
+            if self.slots[slot] is not None:
+                self.allocation_maps[self.slots[slot]] = slot
 
     def mutate(self, count):
         """
@@ -77,11 +74,9 @@ class Schedule(object):
         penalties = dict()
         penalties['clash_time_teacher'] = -1000
         penalties['clash_time_batch'] = -1000
-
         fitness = 0
-
         # teacher time clashes
-        for time_slot in self.slots:
+        for time_slot in self.slots[(None, None): (None, None)]:
             teachers = dict()
             for allocation in time_slot:
                 try:
@@ -91,9 +86,8 @@ class Schedule(object):
             violations = sum((
                 (count - 1) for count in teachers.values() if count > 1))
             fitness += violations * penalties['clash_time_teacher']
-
         # batches time clashes
-        for time_slot in self.slots:
+        for time_slot in self.slots[(None, None): (None, None)]:
             batches = dict()
             for allocation in time_slot:
                 try:
@@ -103,7 +97,6 @@ class Schedule(object):
             violations = sum((
                 (count - 1) for count in batches.values() if count > 1))
             fitness += violations * penalties['clash_time_batch']
-
         return fitness
 
     def mutate2(self, count):
@@ -116,25 +109,55 @@ class Schedule(object):
             self.swap(swap1, swap2)
 
     def shuffle_swap(self, slot1, slot2):
-        slot1 = self.slot_indices(slot1)
-        slot2 = self.slot_indices(slot2)
-
         """ Need to shuffle all the slots between the two points"""
-        shuffled_part = self.slots[
-            slot1.time:slot2.time][slot1.room:slot2.room]
+        shuffled_part = self.slots[slot1:slot2]
         random.shuffle(shuffled_part)
-        self.slots[slot1.time:slot2.time][slot1.room:slot2.room] = (
-            shuffled_part)
-
-        for slot in (slot1, slot2):
-            if self.slots[slot.time][slot.room] is not None:
-                self.allocation_maps[self.slots[slot.time][slot.room]] = slot
+        self.slots[slot1:slot2] = shuffled_part
+        for slot in range(slot1, slot2):
+            if self.slots[slot] is not None:
+                self.allocation_maps[self.slots[slot]] = slot
 
     def mutate3(self, count):
         """ Shuffling randomly between two points """
         for swap in range(count):
-            swap1 = random.randrange(self._n_slots)
-            swap2 = random.randrange(self._n_slots)
-            while(swap2 == swap1):
-                swap2 = random.randrange(self._n_slots)
-        self.shuffle_swap(self, swap1, swap2)
+            swap1 = random.randrange(self._n_slots - 1)
+            swap2 = random.randrange(swap1, self._n_slots)
+            self.shuffle_swap(self, swap1, swap2)
+
+
+def swap_between(schedule_1, schedule_2, slot):
+    schedule_1.slots[slot], schedule_2.slots[slot] = (
+        schedule_2.slots[slot],
+        schedule_1.slots[slot])
+    for schedule in (schedule_1, schedule_2):
+        if schedule.slots[slot] is not None:
+            schedule.allocation_maps[schedule.slots[slot]] = slot
+
+
+def swap_chunk(self, cross_point_1, cross_point_2, schedule_1, schedule_2):
+    """
+    Swap the chunk of allocations between the two
+    indices crossover1(slot1) & crossover2(slot2)
+    of two parent allocations.
+
+    The parents are cloned to form the children.
+    """
+
+    child_1 = Schedule.from_Schedule(schedule_1)
+    child_2 = Schedule.from_Schedule(schedule_2)
+    cross_point_1, cross_point_2 = (
+        min(cross_point_1, cross_point_2),
+        max(cross_point_1, cross_point_2))
+    for slot_number in range(cross_point_1, cross_point_2 + 1):
+            swap_between(child_1, child_2, slot_number)
+    return child_1, child_2
+
+
+def crossover(self, schedule_1, schedule_2, count):
+    """
+    Combine two parent allocations into two offsprings
+    by swapping randomly determined chunk.
+    """
+    cross_point_1 = random.randrange(self._n_slots - 1)
+    cross_point_2 = random.randrange(cross_point_1, self._n_slots)
+    swap_chunk(cross_point_1, cross_point_2, schedule_1, schedule_2)
