@@ -158,6 +158,8 @@ def crossover(self, schedule_1, schedule_2, count):
     Combine two parent allocations into two offsprings
     by swapping randomly determined chunk.
     """
-    cross_point_1 = random.randrange(self._n_slots - 1)
-    cross_point_2 = random.randrange(cross_point_1 + 1, self._n_slots)
+    cross_point_1 = random.randrange(self._n_slots)
+    cross_point_2 = random.randrange(self._n_slots)
+    while (cross_point_2 == cross_point_1):
+        cross_point_2 = random.randrange(self._n_slots)
     swap_chunk(cross_point_1, cross_point_2, schedule_1, schedule_2)
