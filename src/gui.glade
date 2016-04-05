@@ -165,6 +165,7 @@
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="menubar__file__new" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -174,6 +175,7 @@
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="menubar__file__open" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -189,6 +191,7 @@
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="close" object="main_window" swapped="no"/>
                       </object>
                     </child>
                   </object>
