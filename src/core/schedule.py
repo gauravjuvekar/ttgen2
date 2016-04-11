@@ -2,7 +2,7 @@
 import random
 from collections import namedtuple
 
-import multilist
+from core import  multilist
 
 
 class Schedule(object):

@@ -7,6 +7,7 @@ from gi.repository import Gtk, GObject, Gio
 import logging
 logger = logging.getLogger(__name__)
 
+import core
 
 import pickle
 import meta
