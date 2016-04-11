@@ -7,6 +7,8 @@ from gi.repository import Gtk, GObject, Gio
 import logging
 logger = logging.getLogger(__name__)
 
+import sys
+
 import core
 
 import pickle
@@ -14,14 +16,15 @@ import meta
 
 
 class Handlers(object):
-    def __init__(self, builder=None, meta=None):
+    def __init__(self, app, builder=None, meta=None):
         self.builder = builder
         self.meta = meta
+        self.application = app
 
-    def close(self, main_window, *args):
+    def close(self, *args):
         print("handlers.close")
         print("main_win")
-        main_window.destroy()
+        self.application.window.destroy()
 
     def menubar__file__new(self, *args):
         # TODO ask to save current file if dirty
@@ -62,38 +65,52 @@ class Handlers(object):
 
 
 class TTgen2(Gtk.Application):
-    handlers = Handlers(meta=meta.Meta())
-
-    def __init__(self, application_id, flags):
+    def __init__(
+            self,
+            application_id="com.ttgen2.ttgen2",
+            flags=Gio.ApplicationFlags.FLAGS_NONE,
+            glade_file="gui/gui.glade"):
         Gtk.Application.__init__(
             self,
             application_id=application_id,
             flags=flags)
-        self.connect("activate", self.new_window)
-
-    def new_window(self, *args):
-        ApplicationWindow(self)
-
-
-class ApplicationWindow(object):
-    def __init__(self, application, glade="gui/gui.glade"):
-        self.application = application
+        self.handlers = Handlers(meta=meta.Meta(), app=self)
         try:
-            builder = Gtk.Builder.new_from_file(glade)
-            application.handlers.builder = builder
-            application.handlers.builder.connect_signals(application.handlers)
+            self.builder = Gtk.Builder.new_from_file(glade_file)
+            self.builder.connect_signals(self.handlers)
         except GObject.GError:
-            logger.critical("Error reading glade file %s", glade)
+            logger.critical("Error reading glade file %s", glade_file)
             raise
-        self.main_window = builder.get_object("main_window")
-        self.main_window.set_application(self.application)
-        self.main_window.show()
+
+    def do_activate(self):
+        self.window = self.builder.get_object("main_window")
+        self.window.set_application(self)
+        self.window.connect('destroy', self.on_quit)
+        self.window.show_all()
+        self.add_window(self.window)
+
+    def do_startup(self):
+        Gtk.Application.do_startup(self)
+
+    def do_shutdown(self):
+        Gtk.Application.do_shutdown(self)
+
+    def on_quit(self, *args):
+        self.quit()
 
 
 def main():
-    ttgen2 = TTgen2("com.ttgen2.ttgen2", Gio.ApplicationFlags.FLAGS_NONE)
-    ttgen2.run()
+    ttgen2 = TTgen2()
+    sys.exit(ttgen2.run(sys.argv))
 
 
 if __name__ == "__main__":
+    log_level = logging.DEBUG
+    format_str = "{levelname:8s} {asctime} {name}"
+    format_str += ": {message}"
+
+    logging.basicConfig(
+        level=log_level,
+        style='{',
+        format=format_str)
     main()
