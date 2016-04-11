@@ -22,8 +22,7 @@ class Handlers(object):
         self.application = app
 
     def close(self, *args):
-        print("handlers.close")
-        print("main_win")
+        # TODO close and write files as necessary
         self.application.window.destroy()
 
     def menubar__file__new(self, *args):
