@@ -75,7 +75,7 @@ class TTgen2(Gtk.Application):
 
 
 class ApplicationWindow(object):
-    def __init__(self, application, glade="gui.glade"):
+    def __init__(self, application, glade="gui/gui.glade"):
         self.application = application
         try:
             builder = Gtk.Builder.new_from_file(glade)
