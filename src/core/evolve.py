@@ -1,4 +1,4 @@
-import schedule
+from core import schedule
 
 population = []
 
