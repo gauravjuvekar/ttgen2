@@ -14,17 +14,21 @@ def save_if_unsaved_changes(runtime_state):
         dialog = runtime_state.builder.get_object("unsaved_changes_dialog")
         res = dialog.run()
         dialog.hide()
+        logger.debug("Unsaved changes dialog returned %s", res)
+        logger.debug("CANCEL is %s", Gtk.ResponseType.CANCEL)
+        logger.debug("DELETE is %s", Gtk.ResponseType.DELETE_EVENT)
+
         if res == Gtk.ResponseType.ACCEPT:
             # Save and continue with action
             save(runtime_state)
             return True
-        elif res in (Gtk.ResponseType.CANCEL, Gtk.ResponseType.DELETE_EVENT):
+        elif (res == Gtk.ResponseType.CANCEL or
+                res == Gtk.ResponseType.DELETE_EVENT):
             # Cancel or close dialog
             return False
         elif res == Gtk.ResponseType.REJECT:
             # Discard changes and continue
             return True
-        logger.debug("Unsaved changes dialog returned %s", res)
     else:
         return True
 
