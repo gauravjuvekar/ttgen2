@@ -16,7 +16,7 @@ class MenubarHandlers(gui.handlers.BaseHandlers):
     def menubar__file__open(self, *args):
         dialog = Gtk.FileChooserDialog(
             "Open file",
-            parent=self.builder.get_object("main_window"),
+            parent=self.runtime_state.builder.get_object("main_window"),
             action=Gtk.FileChooserAction.OPEN,
             buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                      Gtk.STOCK_OPEN, Gtk.ResponseType.ACCEPT))
@@ -31,11 +31,12 @@ class MenubarHandlers(gui.handlers.BaseHandlers):
         dialog.destroy()
         with open(file_name, 'rb') as f:
             try:
-                self.meta = pickle.load(f)
+                self.runtime_state.state = pickle.load(f)
             except pickle.UnpicklingError:
                 dialog = Gtk.MessageDialog(
                     "Cannot open that file",
-                    parent=self.builder.get_object("main_window"),
+                    parent=(self.runtime_state.
+                            builder.get_object("main_window")),
                     flags=(Gtk.DialogFlags.MODAL |
                            Gtk.DialogFlags.DESTROY_WITH_PARENT),
                     message_type=Gtk.MessageType.ERROR,
@@ -44,4 +45,6 @@ class MenubarHandlers(gui.handlers.BaseHandlers):
                     title="Cannot open file")
                 dialog.run()
                 dialog.destroy()
-        # TODO refresh everything
+            else:
+                self.runtime_state.filename = file_name
+                # TODO refresh everything

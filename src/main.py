@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 import sys
 
-import meta
+import state
 import gui
 
 
@@ -30,8 +30,7 @@ class TTgen2(Gtk.Application):
         try:
             self.builder = Gtk.Builder.new_from_file(glade_file)
             self.handlers = Handlers(
-                builder=self.builder,
-                meta=meta.Meta(),
+                runtime_state=state.RuntimeState(builder=self.builder),
                 app=self)
             self.builder.connect_signals(self.handlers)
         except GObject.GError:

@@ -11,7 +11,7 @@ class Prefs(object):
         self.population_size = None
 
 
-class Meta(object):
+class State(object):
     def __init__(self):
         self.allocations = []
         self.subjects = []
@@ -20,3 +20,11 @@ class Meta(object):
         self.batches = []
         self.population = []
         self.prefs = Prefs()
+
+
+class RuntimeState(object):
+    def __init__(self, state=None, builder=None, filename=None):
+        self.builder = builder
+        self.filename = filename
+        self.unsaved_changes = False
+        self.state = state
