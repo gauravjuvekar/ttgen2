@@ -17,7 +17,7 @@ class Schedule(object):
         self._n_rooms = schedule._n_rooms
         self._n_times = schedule._n_times
         self._n_slots = schedule._n_slots
-        self.slots = schedule.slots[:]
+        self.slots = multilist.MultiList(schedule._n_rooms, schedule._n_rooms, schedule.slots[:])
         self.allocations = schedule.allocations
         self.allocation_maps = schedule.allocation_maps.copy()
         return self
