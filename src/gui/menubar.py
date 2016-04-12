@@ -58,3 +58,12 @@ class MenubarHandlers(gui.handlers.BaseHandlers):
                 else:
                     self.runtime_state.filename = file_name
                     # TODO refresh everything
+
+    def menubar__file__save(self, *args):
+        gui.file_save.save(self.runtime_state)
+
+    def menubar__file__saveas(self, *args):
+        old_name = self.runtime_state.filename
+        self.runtime_state.filename = None
+        gui.file_save.save(self.runtime_state)
+        self.runtime_state.filename = old_name

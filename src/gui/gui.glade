@@ -186,6 +186,7 @@
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="menubar__file__save" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -195,6 +196,7 @@
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="menubar__file__saveas" swapped="no"/>
                       </object>
                     </child>
                     <child>
