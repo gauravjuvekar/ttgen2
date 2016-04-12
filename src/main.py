@@ -9,58 +9,12 @@ logger = logging.getLogger(__name__)
 
 import sys
 
-import core
-
-import pickle
 import meta
+import gui
 
 
-class Handlers(object):
-    def __init__(self, app, builder=None, meta=None):
-        self.builder = builder
-        self.meta = meta
-        self.application = app
-
-    def close(self, *args):
-        # TODO close and write files as necessary
-        self.application.window.destroy()
-
-    def menubar__file__new(self, *args):
-        # TODO ask to save current file if dirty
-        pass
-
-    def menubar__file__open(self, *args):
-        dialog = Gtk.FileChooserDialog(
-            "Open file",
-            parent=self.builder.get_object("main_window"),
-            action=Gtk.FileChooserAction.OPEN,
-            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                     Gtk.STOCK_OPEN, Gtk.ResponseType.ACCEPT))
-        res = dialog.run()
-        if res == Gtk.ResponseType.ACCEPT:
-            file_name = dialog.get_filename()
-        elif res in (Gtk.ResponseType.CANCEL, Gtk.ResponseType.DELETE_EVENT):
-            return
-        else:
-            raise RuntimeError()
-        logger.debug("Opening file %s", file_name)
-        dialog.destroy()
-        with open(file_name, 'rb') as f:
-            try:
-                self.meta = pickle.load(f)
-            except pickle.UnpicklingError:
-                dialog = Gtk.MessageDialog(
-                    "Cannot open that file",
-                    parent=self.builder.get_object("main_window"),
-                    flags=(Gtk.DialogFlags.MODAL |
-                           Gtk.DialogFlags.DESTROY_WITH_PARENT),
-                    message_type=Gtk.MessageType.ERROR,
-                    buttons=(Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE),
-                    text="Error reading file {}".format(file_name),
-                    title="Cannot open file")
-                dialog.run()
-                dialog.destroy()
-        # TODO refresh everything
+class Handlers(gui.menubar.MenubarHandlers):
+    pass
 
 
 class TTgen2(Gtk.Application):
@@ -73,9 +27,12 @@ class TTgen2(Gtk.Application):
             self,
             application_id=application_id,
             flags=flags)
-        self.handlers = Handlers(meta=meta.Meta(), app=self)
         try:
             self.builder = Gtk.Builder.new_from_file(glade_file)
+            self.handlers = Handlers(
+                builder=self.builder,
+                meta=meta.Meta(),
+                app=self)
             self.builder.connect_signals(self.handlers)
         except GObject.GError:
             logger.critical("Error reading glade file %s", glade_file)
