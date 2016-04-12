@@ -6,9 +6,11 @@ class Prefs(object):
         self.penalties = {
             'clash_time_teacher': -1000,
             'clash_time_batch': -1000}
-        self.n_times = None
-        self.mutate_counts = None
-        self.population_size = None
+        self._n_days = 6
+        self._n_times_per_day = 8
+        self.n_times = self._n_days * self._n_times_per_day
+        self.mutate_counts = 3
+        self.population_size = 50
 
 
 class State(object):

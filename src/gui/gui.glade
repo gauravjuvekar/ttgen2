@@ -222,7 +222,6 @@
             <child>
               <object class="GtkMenuItem" id="edit_menu">
                 <property name="visible">True</property>
-                <property name="sensitive">False</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">_Edit</property>
                 <property name="use_underline">True</property>
@@ -237,6 +236,7 @@
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="menubar__edit__preferences" swapped="no"/>
                       </object>
                     </child>
                   </object>
@@ -276,7 +276,6 @@
         <child>
           <object class="GtkPaned" id="app_view_pane">
             <property name="visible">True</property>
-            <property name="sensitive">False</property>
             <property name="can_focus">True</property>
             <property name="orientation">vertical</property>
             <child>
@@ -1028,6 +1027,7 @@
     <property name="modal">True</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="transient_for">main_window</property>
+    <signal name="delete-event" handler="menubar__edit__preferences_cancel" swapped="no"/>
     <child>
       <object class="GtkBox" id="preferences_window_vbox">
         <property name="can_focus">False</property>
@@ -1047,6 +1047,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="menubar__edit__preferences_cancel" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1060,6 +1061,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="menubar__edit__preferences_ok" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1173,7 +1175,7 @@ batch time clash</property>
                 <property name="adjustment">preferences_working_days_adjustment</property>
                 <property name="snap_to_ticks">True</property>
                 <property name="numeric">True</property>
-                <property name="value">50</property>
+                <property name="value">5</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -1203,6 +1205,9 @@ batch time clash</property>
                 <property name="can_focus">True</property>
                 <property name="input_purpose">number</property>
                 <property name="adjustment">preferences_time_slots_per_day_adjustment</property>
+                <property name="snap_to_ticks">True</property>
+                <property name="numeric">True</property>
+                <property name="value">8</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>

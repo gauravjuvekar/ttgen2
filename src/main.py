@@ -30,7 +30,9 @@ class TTgen2(Gtk.Application):
         try:
             self.builder = Gtk.Builder.new_from_file(glade_file)
             self.handlers = Handlers(
-                runtime_state=state.RuntimeState(builder=self.builder),
+                runtime_state=state.RuntimeState(
+                    builder=self.builder,
+                    state=state.State()),
                 app=self)
             self.builder.connect_signals(self.handlers)
         except GObject.GError:

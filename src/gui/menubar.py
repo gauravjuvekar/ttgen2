@@ -67,3 +67,64 @@ class MenubarHandlers(gui.handlers.BaseHandlers):
         self.runtime_state.filename = None
         gui.file_save.save(self.runtime_state)
         self.runtime_state.filename = old_name
+
+    def menubar__edit__preferences(self, *args):
+        builder = self.runtime_state.builder
+        prefs = self.runtime_state.state.prefs
+        builder.get_object(
+            "preferences_window_" +
+            "working_days_spinbutton").props.value = prefs._n_days
+        builder.get_object(
+            "preferences_window_" +
+            "time_slots_per_day_spinbutton").props.value = (
+            prefs._n_times_per_day)
+        builder.get_object(
+            "preferences_window_fitness_penalty_" +
+            "time_clash_teacher_spinbutton").props.value = (
+            prefs.penalties['clash_time_teacher'])
+        builder.get_object(
+            "preferences_window_fitness_penalty_" +
+            "time_clash_batch_spinbutton").props.value = (
+            prefs.penalties['clash_time_batch'])
+        builder.get_object(
+            "preferences_window_population_spinbutton").props.value = (
+            prefs.population_size)
+        builder.get_object(
+            "preferences_window_mutation_swaps_spinbutton").props.value = (
+            prefs.mutate_counts)
+        builder.get_object("preferences_window").show_all()
+
+    def menubar__edit__preferences_ok(self, *args):
+        builder = self.runtime_state.builder
+        prefs = self.runtime_state.state.prefs
+        n_days = int(builder.get_object(
+            "preferences_window_" +
+            "working_days_spinbutton").props.value)
+        n_times_per_day = int(builder.get_object(
+            "preferences_window_" +
+            "time_slots_per_day_spinbutton").props.value)
+        if ((n_days != prefs._n_days) or
+                (n_times_per_day != prefs._n_times_per_day)):
+            del self.runtime_state.state.population[:]
+            prefs._n_days = n_days
+            prefs._n_times_per_day = n_times_per_day
+            prefs.n_times = n_days * n_times_per_day
+        prefs.penalties['clash_time_teacher'] = builder.get_object(
+            "preferences_window_fitness_penalty_" +
+            "time_clash_teacher_spinbutton").props.value
+        prefs.penalties['clash_time_batch'] = builder.get_object(
+            "preferences_window_fitness_penalty_" +
+            "time_clash_batch_spinbutton").props.value
+        population_size = int(builder.get_object(
+            "preferences_window_population_spinbutton").props.value)
+        del self.runtime_state.state.population[population_size:]
+        # TODO extend population by random seed
+        # self.runtime_state.population.extend()
+        prefs.population_size = population_size
+        prefs.mutate_counts = int(builder.get_object(
+            "preferences_window_mutation_swaps_spinbutton").props.value)
+        self.runtime_state.unsaved_changes = True
+        builder.get_object("preferences_window").hide()
+
+    def menubar__edit__preferences_cancel(self, *args):
+        self.runtime_state.builder.get_object("preferences_window").hide()
