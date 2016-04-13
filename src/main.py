@@ -13,7 +13,7 @@ import state
 import gui
 
 
-class Handlers(gui.menubar.MenubarHandlers):
+class Handlers(gui.menubar.MenubarHandlers, gui.notebook.NotebookHandlers):
     pass
 
 
