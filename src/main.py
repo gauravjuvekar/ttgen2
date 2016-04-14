@@ -13,7 +13,9 @@ import state
 import gui
 
 
-class Handlers(gui.menubar.MenubarHandlers, gui.notebook.NotebookHandlers):
+class Handlers(
+        gui.menubar.MenubarHandlers,
+        gui.notebook.NotebookHandlers):
     pass
 
 

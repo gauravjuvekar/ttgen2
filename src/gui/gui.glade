@@ -352,6 +352,7 @@
                   <object class="GtkNotebook" id="notebook">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <signal name="switch-page" handler="notebook__switch_page" swapped="no"/>
                     <child>
                       <object class="GtkScrolledWindow" id="allocations_scrolled_window">
                         <property name="visible">True</property>
@@ -749,6 +750,7 @@
     <property name="modal">True</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="transient_for">main_window</property>
+    <signal name="delete-event" handler="allocation__add_cancel" swapped="no"/>
     <child>
       <object class="GtkBox" id="allocations_add_window_vbox">
         <property name="can_focus">False</property>
@@ -768,6 +770,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="allocation__add_cancel" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -903,6 +906,7 @@
     <property name="modal">True</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="transient_for">main_window</property>
+    <signal name="delete-event" handler="batch__add_cancel" swapped="no"/>
     <child>
       <object class="GtkBox" id="batches_add_window_vbox">
         <property name="can_focus">False</property>
@@ -922,6 +926,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="batch__add_cancel" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1333,6 +1338,7 @@ room capacity</property>
     <property name="modal">True</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="transient_for">main_window</property>
+    <signal name="delete-event" handler="room__add_cancel" swapped="no"/>
     <child>
       <object class="GtkBox" id="rooms_add_window_vbox">
         <property name="can_focus">False</property>
@@ -1352,6 +1358,7 @@ room capacity</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="room__add_cancel" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1457,6 +1464,7 @@ room capacity</property>
     <property name="modal">True</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="transient_for">main_window</property>
+    <signal name="delete-event" handler="subject__add_cancel" swapped="no"/>
     <child>
       <object class="GtkBox" id="subjects_add_window_vbox">
         <property name="can_focus">False</property>
@@ -1476,6 +1484,7 @@ room capacity</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="subject__add_cancel" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1489,6 +1498,7 @@ room capacity</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="subject__add_ok" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1556,6 +1566,7 @@ room capacity</property>
     <property name="modal">True</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="transient_for">main_window</property>
+    <signal name="delete-event" handler="teacher__add_cancel" swapped="no"/>
     <child>
       <object class="GtkBox" id="teachers_add_window_vbox">
         <property name="can_focus">False</property>
@@ -1576,6 +1587,7 @@ room capacity</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="yalign">0.60000002384185791</property>
+                <signal name="clicked" handler="teacher__add_cancel" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

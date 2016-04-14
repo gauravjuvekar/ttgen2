@@ -17,7 +17,21 @@ class Tabs(enum.IntEnum):
     SUBJECTS = 5
 
 
-class NotebookHandlers(gui.handlers.BaseHandlers):
+class NotebookHandlers(
+        gui.subjects.SubjectHandlers,
+        gui.rooms.RoomHandlers,
+        gui.teachers.TeacherHandlers,
+        gui.batches.BatchHandlers,
+        gui.allocations.AllocationHandlers,
+        gui.handlers.BaseHandlers):
+    def notebook__switch_page(self, notebook, page, page_num, *args):
+        add_button = self.runtime_state.builder.get_object(
+            "notebook_add_button")
+        if page_num == Tabs.SCHEDULES:
+            add_button.set_sensitive(False)
+        else:
+            add_button.set_sensitive(True)
+
     def notebook__remove(self, *args):
         current_tab = Tabs(
             self.runtime_state.builder.get_object(
@@ -49,22 +63,29 @@ class NotebookHandlers(gui.handlers.BaseHandlers):
         print("removing subject")
 
     def notebook__add_allocation(self, *args):
-        print("adding allocation")
+        self.runtime_state.builder.get_object(
+            "allocations_add_window").show_all()
 
     def notebook__add_schedule(self, *args):
-        print("adding schedule")
+        raise RuntimeError(
+            "Cannot add schedule directly. " +
+            "Option should not have been sensitive")
 
     def notebook__add_teacher(self, *args):
-        print("adding teacher")
+        self.runtime_state.builder.get_object(
+            "teachers_add_window").show_all()
 
     def notebook__add_room(self, *args):
-        print("adding room")
+        self.runtime_state.builder.get_object(
+            "rooms_add_window").show_all()
 
     def notebook__add_batch(self, *args):
-        print("adding batch")
+        self.runtime_state.builder.get_object(
+            "batches_add_window").show_all()
 
     def notebook__add_subject(self, *args):
-        print("adding subject")
+        self.runtime_state.builder.get_object(
+            "subjects_add_window").show_all()
 
     notebook__remove_cb = {
         Tabs.ALLOCATIONS: notebook__remove_allocation,
