@@ -4,19 +4,11 @@
   <requires lib="gtk+" version="3.10"/>
   <object class="GtkListStore" id="allocations_list_store">
     <columns>
-      <!-- column-name pk -->
-      <column type="gint"/>
-      <!-- column-name batch_pk -->
-      <column type="gint"/>
-      <!-- column-name batch_name -->
-      <column type="gchararray"/>
-      <!-- column-name subject_pk -->
-      <column type="gint"/>
       <!-- column-name subject_name -->
       <column type="gchararray"/>
-      <!-- column-name teacher_pk -->
-      <column type="gint"/>
       <!-- column-name teacher_name -->
+      <column type="gchararray"/>
+      <!-- column-name batch_name -->
       <column type="gchararray"/>
     </columns>
   </object>
@@ -27,8 +19,6 @@
   </object>
   <object class="GtkListStore" id="batches_list_store">
     <columns>
-      <!-- column-name pk -->
-      <column type="gint"/>
       <!-- column-name name -->
       <column type="gchararray"/>
       <!-- column-name heads -->
@@ -39,6 +29,61 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="model">batches_list_store</property>
+  </object>
+  <object class="GtkDialog" id="infeasibly_many_allocations_dialog">
+    <property name="can_focus">False</property>
+    <property name="type_hint">dialog</property>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="infeasibly_many_allocations_dialog_vbox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="infeasibly_many_allocations_dialog_action_area">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="infeasibly_many_allocations_close_button">
+                <property name="label">gtk-close</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="infeasibly_many_allocations_label">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="xpad">6</property>
+            <property name="ypad">6</property>
+            <property name="label" translatable="yes">Enough slots will not be left for all allocations. Increase time slots from preferences or add more rooms.</property>
+            <property name="wrap">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-6">infeasibly_many_allocations_close_button</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkAdjustment" id="preferences_fitness_penalty_room_capacity_adjustment">
     <property name="lower">-1000000</property>
@@ -90,7 +135,7 @@
   </object>
   <object class="GtkListStore" id="rooms_list_store">
     <columns>
-      <!-- column-name pk -->
+      <!-- column-name index -->
       <column type="gint"/>
       <!-- column-name name -->
       <column type="gchararray"/>
@@ -100,16 +145,12 @@
   </object>
   <object class="GtkListStore" id="schedules_list_store">
     <columns>
-      <!-- column-name pk -->
-      <column type="gint"/>
       <!-- column-name fitness -->
       <column type="gfloat"/>
     </columns>
   </object>
   <object class="GtkListStore" id="subjects_list_store">
     <columns>
-      <!-- column-name pk -->
-      <column type="gint"/>
       <!-- column-name name -->
       <column type="gchararray"/>
     </columns>
@@ -130,8 +171,6 @@
   </object>
   <object class="GtkListStore" id="teachers_list_store">
     <columns>
-      <!-- column-name pk -->
-      <column type="gint"/>
       <!-- column-name name -->
       <column type="gchararray"/>
     </columns>
@@ -367,6 +406,39 @@
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="allocations_tree_view_selection"/>
                             </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="allocations_tree_view_column_subject">
+                                <property name="title" translatable="yes">Subject</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="allocations_tree_view_column_subject_renderer"/>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="allocations_tree_view_column_teacher">
+                                <property name="title" translatable="yes">Teacher</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="allocations_tree_view_column_teacher_renderer"/>
+                                  <attributes>
+                                    <attribute name="text">1</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="allocations_tree_view_column_batch">
+                                <property name="title" translatable="yes">Batch</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="allocations_tree_view_column_batch_renderer"/>
+                                  <attributes>
+                                    <attribute name="text">2</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
                           </object>
                         </child>
                       </object>
@@ -394,6 +466,17 @@
                             <property name="level_indentation">1</property>
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="schedules_tree_selection"/>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="schedules_tree_view_column_fitness">
+                                <property name="title" translatable="yes">Fitness</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="schedules_tree_view_column_fitness_renderer"/>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
                             </child>
                           </object>
                         </child>
@@ -426,6 +509,17 @@
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="teachers_tree_view_selection"/>
                             </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="teachers_tree_view_column_name">
+                                <property name="title" translatable="yes">Name</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="teachers_tree_view_column_name_renderer"/>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
                           </object>
                         </child>
                       </object>
@@ -456,6 +550,28 @@
                             <property name="model">rooms_list_store</property>
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="rooms_tree_view_selection"/>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="rooms_tree_view_column_name">
+                                <property name="title" translatable="yes">Name</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="rooms_tree_view_column_name_renderer"/>
+                                  <attributes>
+                                    <attribute name="text">1</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="rooms_tree_view_column_capacity">
+                                <property name="title" translatable="yes">Capacity</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="rooms_tree_view_column_capacity_renderer"/>
+                                  <attributes>
+                                    <attribute name="text">2</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
                             </child>
                           </object>
                         </child>
@@ -488,6 +604,28 @@
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="batches_tree_view_selection"/>
                             </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="batches_tree_view_column_name">
+                                <property name="title" translatable="yes">Name</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="batches_tree_view_column_name_renderer"/>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="batches_tree_view_column_heads">
+                                <property name="title" translatable="yes">Heads</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="batches_tree_view_column_heads_renderer"/>
+                                  <attributes>
+                                    <attribute name="text">1</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
                           </object>
                         </child>
                       </object>
@@ -518,6 +656,17 @@
                             <property name="model">subjects_list_store</property>
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="subjects_tree_view_selection"/>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="subjects_tree_view_column_name">
+                                <property name="title" translatable="yes">Name</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="subjects_tree_view_column_name_renderer"/>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
                             </child>
                           </object>
                         </child>
@@ -784,6 +933,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="allocation__add_ok" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -856,6 +1006,12 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="model">subjects_list_store</property>
+                <child>
+                  <object class="GtkCellRendererText" id="allocations_add_window_subject_combobox_renderer"/>
+                  <attributes>
+                    <attribute name="text">0</attribute>
+                  </attributes>
+                </child>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -869,6 +1025,12 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="model">batches_list_store</property>
+                <child>
+                  <object class="GtkCellRendererText" id="allocations_add_window_batch_combobox_renderer"/>
+                  <attributes>
+                    <attribute name="text">0</attribute>
+                  </attributes>
+                </child>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -882,6 +1044,12 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="model">teachers_list_store</property>
+                <child>
+                  <object class="GtkCellRendererText" id="allocations_add_window_teacher_combobox_renderer"/>
+                  <attributes>
+                    <attribute name="text">0</attribute>
+                  </attributes>
+                </child>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -940,6 +1108,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="batch__add_ok" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1372,6 +1541,7 @@ room capacity</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="room__add_ok" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1601,6 +1771,7 @@ room capacity</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="teacher__add_ok" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1724,6 +1895,8 @@ room capacity</property>
           <object class="GtkLabel" id="unsaved_changes_label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="xpad">6</property>
+            <property name="ypad">6</property>
             <property name="label" translatable="yes">You have unsaved changes. Do you want to save to a file?</property>
           </object>
           <packing>
