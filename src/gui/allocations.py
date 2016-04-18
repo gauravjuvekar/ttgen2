@@ -62,3 +62,11 @@ class AllocationHandlers(gui.handlers.BaseHandlers):
         self.runtime_state.builder.get_object("allocations_add_window").hide()
         # Return True to prevent the window being destroyed
         return True
+
+    def allocation__refresh(self, *args):
+        store = self.runtime_state.builder.get_object("allocations_list_store")
+        view = self.runtime_state.builder.get_object("allocations_tree_view")
+        store.clear()
+        for allocation in self.runtime_state.state.allocations:
+            store.append(liststore_row(allocation))
+        view.get_selection().unselect_all()

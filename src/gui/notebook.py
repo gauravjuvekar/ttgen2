@@ -32,6 +32,14 @@ class NotebookHandlers(
         else:
             add_button.set_sensitive(True)
 
+    def notebook__refresh(self, *args):
+        logger.debug("Refreshing all notebooks")
+        self.subject__refresh()
+        self.room__refresh()
+        self.teacher__refresh()
+        self.batch__refresh()
+        self.allocation__refresh()
+
     def notebook__remove(self, *args):
         current_tab = Tabs(
             self.runtime_state.builder.get_object(

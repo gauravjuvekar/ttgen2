@@ -9,7 +9,9 @@ import gui
 import state
 
 
-class MenubarHandlers(gui.handlers.BaseHandlers):
+class MenubarHandlers(
+        gui.notebook.NotebookHandlers,
+        gui.handlers.BaseHandlers):
     def menubar__file__new(self, *args):
         if not gui.file_save.save_if_unsaved_changes(self.runtime_state):
             return
@@ -17,7 +19,7 @@ class MenubarHandlers(gui.handlers.BaseHandlers):
             self.runtime_state.filename = None
             self.runtime_state.state = state.State()
             self.runtime_state.unsaved_changes = False
-            # TODO refresh
+            self.notebook__refresh()
 
     def menubar__file__open(self, *args):
         if not gui.file_save.save_if_unsaved_changes(self.runtime_state):
@@ -57,7 +59,7 @@ class MenubarHandlers(gui.handlers.BaseHandlers):
                     dialog.destroy()
                 else:
                     self.runtime_state.filename = file_name
-                    # TODO refresh everything
+                    self.notebook__refresh()
 
     def menubar__file__save(self, *args):
         gui.file_save.save(self.runtime_state)
