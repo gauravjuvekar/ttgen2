@@ -86,7 +86,7 @@ class NotebookHandlers(
     def notebook__add_subject(self, *args):
         self.runtime_state.builder.get_object(
             "subjects_add_window").show_all()
-
+    
     notebook__remove_cb = {
         Tabs.ALLOCATIONS: notebook__remove_allocation,
         Tabs.SCHEDULES: notebook__remove_schedule,

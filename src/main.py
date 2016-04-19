@@ -15,7 +15,8 @@ import gui
 
 class Handlers(
         gui.menubar.MenubarHandlers,
-        gui.notebook.NotebookHandlers):
+        gui.notebook.NotebookHandlers,
+        gui.exp.Handler_Grid):
     pass
 
 
