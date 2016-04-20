@@ -145,6 +145,8 @@
   </object>
   <object class="GtkListStore" id="schedules_list_store">
     <columns>
+      <!-- column-name index -->
+      <column type="gint"/>
       <!-- column-name fitness -->
       <column type="gfloat"/>
     </columns>
@@ -465,7 +467,9 @@
                             <property name="model">schedules_list_store</property>
                             <property name="level_indentation">1</property>
                             <child internal-child="selection">
-                              <object class="GtkTreeSelection" id="schedules_tree_selection"/>
+                              <object class="GtkTreeSelection" id="schedules_tree_selection">
+                                <signal name="changed" handler="schedule__redraw" swapped="no"/>
+                              </object>
                             </child>
                             <child>
                               <object class="GtkTreeViewColumn" id="schedules_tree_view_column_fitness">
@@ -473,7 +477,7 @@
                                 <child>
                                   <object class="GtkCellRendererText" id="schedules_tree_view_column_fitness_renderer"/>
                                   <attributes>
-                                    <attribute name="text">0</attribute>
+                                    <attribute name="text">1</attribute>
                                   </attributes>
                                 </child>
                               </object>
