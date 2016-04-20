@@ -18,7 +18,7 @@ class ScheduleHandlers(gui.handlers.BaseHandlers):
         store = self.runtime_state.builder.get_object("schedules_list_store")
         view = self.runtime_state.builder.get_object("schedules_tree_view")
         store.clear()
-        for schedule in self.runtime_state.state.schedules:
+        for schedule in self.runtime_state.state.population:
             store.append(liststore_row(schedule))
         view.get_selection().unselect_all()
 

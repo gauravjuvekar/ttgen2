@@ -40,6 +40,7 @@ class NotebookHandlers(
         self.teacher__refresh()
         self.batch__refresh()
         self.allocation__refresh()
+        self.schedule__refresh()
 
     def notebook__remove(self, *args):
         current_tab = Tabs(

@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 from core import schedule
 
 
@@ -26,10 +29,8 @@ def population_evolve(state, generations, fitness):
     obtained.
     """
     population_seed(state)
-    state.population = state.population.sort(
-        reverse=True,
-        key=lambda _: _.fitness())
-    max_fitness = state.population[0].fitness()
+    state.population.sort(reverse=True, key=lambda _: _.fitness)
+    max_fitness = state.population[0].fitness
     elapsed_generations = 0
     while(max_fitness < fitness and elapsed_generations < generations):
         del state.population[-1]
@@ -41,7 +42,7 @@ def population_evolve(state, generations, fitness):
         state.population.append(child2)
         state.population[-1].mutate()
         state.population[-2].mutate()
-        state.population.sort(reverse=True, key=lambda _: _.fitness())
+        state.population.sort(reverse=True, key=lambda _: _.fitness)
         fittest_schedule = state.population[0]
-        max_fitness = fittest_schedule.fitness()
+        max_fitness = fittest_schedule.fitness
         elapsed_generations += 1
