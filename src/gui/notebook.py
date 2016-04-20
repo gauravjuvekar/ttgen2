@@ -23,6 +23,7 @@ class NotebookHandlers(
         gui.teachers.TeacherHandlers,
         gui.batches.BatchHandlers,
         gui.allocations.AllocationHandlers,
+        gui.schedules.ScheduleHandlers,
         gui.handlers.BaseHandlers):
     def notebook__switch_page(self, notebook, page, page_num, *args):
         add_button = self.runtime_state.builder.get_object(

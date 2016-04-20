@@ -2,7 +2,7 @@
 import random
 from collections import namedtuple
 
-from core import  multilist
+from core import multilist
 
 
 class Schedule(object):
@@ -17,7 +17,10 @@ class Schedule(object):
         self._n_rooms = schedule._n_rooms
         self._n_times = schedule._n_times
         self._n_slots = schedule._n_slots
-        self.slots = multilist.MultiList(schedule._n_rooms, schedule._n_rooms, schedule.slots[:])
+        self.slots = multilist.MultiList(
+            schedule._n_rooms,
+            schedule._n_rooms,
+            schedule.slots[:])
         self.allocations = schedule.allocations
         self.allocation_maps = schedule.allocation_maps.copy()
         return self
@@ -31,6 +34,7 @@ class Schedule(object):
         self.slots = multilist.MultiList(n_rooms, n_times)
         self.allocations = allocations
         self.allocation_maps = dict()
+        self._fitness = None
 
     def seed_random(self):
         """
@@ -97,6 +101,7 @@ class Schedule(object):
             violations = sum((
                 (count - 1) for count in batches.values() if count > 1))
             fitness += violations * penalties['clash_time_batch']
+        self._fitness = fitness
         return fitness
 
     def mutate2(self, count):
@@ -142,7 +147,6 @@ def swap_chunk(self, cross_point_1, cross_point_2, schedule_1, schedule_2):
 
     The parents are cloned to form the children.
     """
-
     child_1 = Schedule.from_Schedule(schedule_1)
     child_2 = Schedule.from_Schedule(schedule_2)
     cross_point_1, cross_point_2 = (
@@ -160,7 +164,8 @@ def crossover(self, schedule_1, schedule_2, count):
     """
     cross_point_1 = random.randrange(self._n_slots)
     cross_point_2 = random.randrange(self._n_slots)
-    while ((cross_point_2 == cross_point_1) or (abs(cross_point_2 - cross_point_1) == abs(_n_slots - 1))):
+    while ((cross_point_2 == cross_point_1) or
+            (abs(cross_point_2 - cross_point_1) ==
+                abs(schedule_1._n_slots - 1))):
         cross_point_2 = random.randrange(self._n_slots)
-    
     swap_chunk(cross_point_1, cross_point_2, schedule_1, schedule_2)
