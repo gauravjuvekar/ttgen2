@@ -142,89 +142,6 @@ class Schedule(object):
             swap2 = random.randrange(swap1, self._n_slots)
             self.shuffle_swap(self, swap1, swap2)
         self._fitness_valid = False
-
-    def closest_vacant(self, slot):
-        """
-        Returns the closest vacant slot to `slot` (or `slot` itself if it is
-        vacant)
-        """
-        def seq_gen(slot, max_len, min_len=0):
-            yield slot
-            lo = hi = slot
-            lo -= 1
-            hi += 1
-            while lo >= 0 or hi < max_len:
-                if lo >= 0:
-                    yield lo
-                    lo -= 1
-                if hi < max_len:
-                    yield hi
-                    hi += 1
-            else:
-                raise StopIteration()
-        for slot in seq_gen(slot, max_len=len(self.allocations)):
-            if self.slots[slot] is None:
-                return slot
-        else:
-            raise RuntimeError("No vacant slot")
-
-
-def swap_between(schedule_1, schedule_2, slot):
-    schedule_1.slots[slot], schedule_2.slots[slot] = (
-        schedule_2.slots[slot],
-        schedule_1.slots[slot])
-    for schedule in (schedule_1, schedule_2):
-        if schedule.slots[slot] is not None:
-            schedule.allocation_maps[schedule.slots[slot]] = slot
-    schedule_1._fitness_valid = False
-    schedule_2._fitness_valid = False
-
-
-def swap_allocations(point_1, point_2, schedule1, schedule2):
-    """
-    Swap the chunk of allocations between point_1 and point_2
-
-    The parents are cloned to form the children.
-    """
-    for alloc in range(point_1, point_2):
-        alloc = schedule1.allocations[alloc]
-        schedule1.slots[schedule1.allocation_maps[alloc]] = None
-        schedule2.slots[schedule2.allocation_maps[alloc]] = None
-    for alloc in range(point_1, point_2):
-        alloc = schedule1.allocations[alloc]
-        schedule1.allocation_maps[alloc], schedule2.allocation_maps[alloc] = (
-            schedule1.closest_vacant(schedule2.allocation_maps[alloc]),
-            schedule2.closest_vacant(schedule1.allocation_maps[alloc]))
-    schedule1._fitness_valid = False
-    schedule2._fitness_valid = False
-
-
-def crossover(self, schedule_1, schedule_2, count):
-    """
-    Combine two parent allocations into two offsprings
-    by swapping randomly determined chunk.
-    """
-    cross_point_1 = random.randrange(self._n_slots)
-    cross_point_2 = random.randrange(self._n_slots)
-    while ((cross_point_2 == cross_point_1) or
-            (abs(cross_point_2 - cross_point_1) ==
-                abs(schedule_1._n_slots - 1))):
-        cross_point_2 = random.randrange(self._n_slots)
-    swap_chunk(cross_point_1, cross_point_2, schedule_1, schedule_2)
-
-    schedule_1._fitness_valid = False
-    schedule_2._fitness_valid = False
-
-
-def crossover_two_point(schedule1, schedule2):
-    """
-    The schedules will be modified
-    Clone them separately first
-    """
-    point_1 = random.randrange(len(schedule1.allocations))
-    point_2 = random.randrange(point_1, len(schedule1.allocations))
-    swap_allocations(point_1, point_2, schedule1, schedule2)
-
 """
 Testing old crossover
 """
@@ -235,6 +152,8 @@ def swap_between(schedule_1, schedule_2, slot):
     for schedule in (schedule_1, schedule_2):
         if schedule.slots[slot] is not None:
             schedule.allocation_maps[schedule.slots[slot]] = slot
+    schedule_1._fitness_valid = False
+    schedule_2._fitness_valid = False
     return schedule_1, schedule_2
 
 def swap_chunk(cross_point_1, cross_point_2, schedule_1, schedule_2):
@@ -260,8 +179,14 @@ def crossover(schedule_1, schedule_2):
     Combine two parent allocations into two offsprings
     by swapping randomly determined chunk.
     """
-    cross_point_1 = random.randrange(schedule_1._n_slots - 1)
-    cross_point_2 = random.randrange(cross_point_1 + 1, schedule_1._n_slots)
-    print "Crosspoints are: ", cross_point_1, " ", cross_point_2
+    cross_point_1 = random.randrange(schedule_1._n_slots)
+    cross_point_2 = random.randrange(schedule_2._n_slots)
+    while ((cross_point_2 == cross_point_1) or
+            (abs(cross_point_2 - cross_point_1) ==
+                abs(schedule_1._n_slots - 1))):
+        cross_point_2 = random.randrange(schedule_1._n_slots)
+    schedule_1._fitness_valid = False
+    schedule_2._fitness_valid = False
     return swap_chunk(cross_point_1, cross_point_2, schedule_1, schedule_2)
     #return swap_chunk(2, 10, schedule_1, schedule_2)
+
