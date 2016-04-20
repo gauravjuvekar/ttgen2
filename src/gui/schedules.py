@@ -26,8 +26,8 @@ class ScheduleHandlers(gui.handlers.BaseHandlers):
         store = self.runtime_state.builder.get_object("schedules_list_store")
         view = self.runtime_state.builder.get_object("schedules_tree_view")
         tree_iter = view.get_selection().get_selected()[1]
-        print(store.get_value(tree_iter, 0))
-        pass
+        sched_index = int((store.get_value(tree_iter, 0)))
+        self.show_tt_win(sched_index)
 
     def evolve(self, *args):
         logger.debug("Evolving")

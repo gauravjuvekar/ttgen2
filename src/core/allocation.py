@@ -12,3 +12,5 @@ class Allocation(object):
             batch=repr(self.batch),
             subject=repr(self.subject),
             teacher=repr(self.teacher))
+    def __str__(self):
+        return str(str(self.batch) + "\n" + str(self.subject) + "\n" + str(self.teacher))
