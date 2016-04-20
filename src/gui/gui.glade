@@ -855,7 +855,9 @@
                           <object class="GtkSpinButton" id="target_fitness_spin_button">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="input_purpose">number</property>
                             <property name="adjustment">target_fitness_adjustment</property>
+                            <property name="numeric">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
