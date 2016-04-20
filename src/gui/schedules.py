@@ -33,3 +33,4 @@ class ScheduleHandlers(gui.handlers.BaseHandlers):
             generations=max_generations,
             fitness=target_fitness)
         self.schedule__refresh()
+        self.runtime_state.unsaved_changes = True

@@ -49,26 +49,25 @@ class Schedule(object):
             # teacher time clashes
             for time_slot in self.slots[(None, None): (None, None)]:
                 teachers = dict()
-                for allocation in time_slot:
-                    try:
-                        teachers[allocation.teacher] += 1
-                    except KeyError:
-                        teachers[allocation.teacher] = 1
-                violations = sum((
-                    (count - 1) for count in teachers.values() if count > 1))
-                fitness += violations * penalties['clash_time_teacher']
-            # batches time clashes
-            for time_slot in self.slots[(None, None): (None, None)]:
                 batches = dict()
                 for allocation in time_slot:
-                    try:
-                        batches[allocation.batch] += 1
-                    except KeyError:
-                        batches[allocation.batch] = 1
-                violations = sum((
+                    if allocation is not None:
+                        try:
+                            teachers[allocation.teacher] += 1
+                        except KeyError:
+                            teachers[allocation.teacher] = 1
+                        try:
+                            batches[allocation.batch] += 1
+                        except KeyError:
+                            batches[allocation.batch] = 1
+                teacher_clashes = sum((
+                    (count - 1) for count in teachers.values() if count > 1))
+                fitness += teacher_clashes * penalties['clash_time_teacher']
+                batch_clashes = sum((
                     (count - 1) for count in batches.values() if count > 1))
-                fitness += violations * penalties['clash_time_batch']
+                fitness += batch_clashes * penalties['clash_time_batch']
             self._fitness = fitness
+            self._fitness_valid = True
         return self._fitness
 
     @fitness.setter
