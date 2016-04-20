@@ -23,6 +23,7 @@ class NotebookHandlers(
         gui.teachers.TeacherHandlers,
         gui.batches.BatchHandlers,
         gui.allocations.AllocationHandlers,
+        gui.schedules.ScheduleHandlers,
         gui.handlers.BaseHandlers):
     def notebook__switch_page(self, notebook, page, page_num, *args):
         add_button = self.runtime_state.builder.get_object(
@@ -31,6 +32,15 @@ class NotebookHandlers(
             add_button.set_sensitive(False)
         else:
             add_button.set_sensitive(True)
+
+    def notebook__refresh(self, *args):
+        logger.debug("Refreshing all notebooks")
+        self.subject__refresh()
+        self.room__refresh()
+        self.teacher__refresh()
+        self.batch__refresh()
+        self.allocation__refresh()
+        self.schedule__refresh()
 
     def notebook__remove(self, *args):
         current_tab = Tabs(

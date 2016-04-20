@@ -37,3 +37,11 @@ class RoomHandlers(gui.handlers.BaseHandlers):
         self.runtime_state.builder.get_object("rooms_add_window").hide()
         # Return True to prevent the window being destroyed
         return True
+
+    def room__refresh(self, *args):
+        store = self.runtime_state.builder.get_object("rooms_list_store")
+        view = self.runtime_state.builder.get_object("rooms_tree_view")
+        store.clear()
+        for room in self.runtime_state.state.rooms:
+            store.append(liststore_row(room))
+        view.get_selection().unselect_all()

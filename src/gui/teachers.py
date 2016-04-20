@@ -33,3 +33,11 @@ class TeacherHandlers(gui.handlers.BaseHandlers):
         self.runtime_state.builder.get_object("teachers_add_window").hide()
         # Return True to prevent the window being destroyed
         return True
+
+    def teacher__refresh(self, *args):
+        store = self.runtime_state.builder.get_object("teachers_list_store")
+        view = self.runtime_state.builder.get_object("teachers_tree_view")
+        store.clear()
+        for teacher in self.runtime_state.state.teachers:
+            store.append(liststore_row(teacher))
+        view.get_selection().unselect_all()

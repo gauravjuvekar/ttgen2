@@ -2,7 +2,7 @@
 import random
 from collections import namedtuple
 
-from core import  multilist
+from core import multilist
 
 
 class Schedule(object):
@@ -17,9 +17,14 @@ class Schedule(object):
         self._n_rooms = schedule._n_rooms
         self._n_times = schedule._n_times
         self._n_slots = schedule._n_slots
-        self.slots = schedule.slots[:]
+        self.slots = multilist.MultiList(
+            schedule._n_rooms,
+            schedule._n_rooms,
+            schedule.slots[:])
         self.allocations = schedule.allocations
         self.allocation_maps = schedule.allocation_maps.copy()
+        self._fitness = schedule._fitness
+        self._fitness_valid = schedule._fitness_valid
         return self
 
     def __init__(self, n_times, n_rooms, allocations):
@@ -31,6 +36,43 @@ class Schedule(object):
         self.slots = multilist.MultiList(n_rooms, n_times)
         self.allocations = allocations
         self.allocation_maps = dict()
+        self._fitness = None
+        self._fitness_valid = False
+
+    @property
+    def fitness(self):
+        if not self._fitness_valid:
+            penalties = dict()
+            penalties['clash_time_teacher'] = -1000
+            penalties['clash_time_batch'] = -1000
+            fitness = 0
+            # teacher time clashes
+            for time_slot in self.slots[(None, None): (None, None)]:
+                teachers = dict()
+                batches = dict()
+                for allocation in time_slot:
+                    if allocation is not None:
+                        try:
+                            teachers[allocation.teacher] += 1
+                        except KeyError:
+                            teachers[allocation.teacher] = 1
+                        try:
+                            batches[allocation.batch] += 1
+                        except KeyError:
+                            batches[allocation.batch] = 1
+                teacher_clashes = sum((
+                    (count - 1) for count in teachers.values() if count > 1))
+                fitness += teacher_clashes * penalties['clash_time_teacher']
+                batch_clashes = sum((
+                    (count - 1) for count in batches.values() if count > 1))
+                fitness += batch_clashes * penalties['clash_time_batch']
+            self._fitness = fitness
+            self._fitness_valid = True
+        return self._fitness
+
+    @fitness.setter
+    def fitness(self):
+        raise AttributeError("'fitness' is read only")
 
     def seed_random(self):
         """
@@ -41,6 +83,7 @@ class Schedule(object):
         for alloc, slot in zip(self.allocations, choices):
             self.slots[slot] = alloc
             self.allocation_maps[alloc] = slot
+        self._fitness_valid = False
 
     def slot_indices(self, slot):
         """
@@ -60,6 +103,7 @@ class Schedule(object):
         for slot in (slot1, slot2):
             if self.slots[slot] is not None:
                 self.allocation_maps[self.slots[slot]] = slot
+        self._fitness_valid = False
 
     def mutate(self, count):
         """
@@ -69,35 +113,7 @@ class Schedule(object):
             self.swap(
                 random.randrange(self._n_slots),
                 random.randrange(self._n_slots))
-
-    def fitness(self):
-        penalties = dict()
-        penalties['clash_time_teacher'] = -1000
-        penalties['clash_time_batch'] = -1000
-        fitness = 0
-        # teacher time clashes
-        for time_slot in self.slots[(None, None): (None, None)]:
-            teachers = dict()
-            for allocation in time_slot:
-                try:
-                    teachers[allocation.teacher] += 1
-                except KeyError:
-                    teachers[allocation.teacher] = 1
-            violations = sum((
-                (count - 1) for count in teachers.values() if count > 1))
-            fitness += violations * penalties['clash_time_teacher']
-        # batches time clashes
-        for time_slot in self.slots[(None, None): (None, None)]:
-            batches = dict()
-            for allocation in time_slot:
-                try:
-                    batches[allocation.batch] += 1
-                except KeyError:
-                    batches[allocation.batch] = 1
-            violations = sum((
-                (count - 1) for count in batches.values() if count > 1))
-            fitness += violations * penalties['clash_time_batch']
-        return fitness
+        self._fitness_valid = False
 
     def mutate2(self, count):
         """ Selected two points always different """
@@ -107,6 +123,7 @@ class Schedule(object):
             while(swap2 == swap1):
                 swap2 = random.randrange(self._n_slots)
             self.swap(swap1, swap2)
+        self._fitness_valid = False
 
     def shuffle_swap(self, slot1, slot2):
         """ Need to shuffle all the slots between the two points"""
@@ -116,6 +133,7 @@ class Schedule(object):
         for slot in range(slot1, slot2):
             if self.slots[slot] is not None:
                 self.allocation_maps[self.slots[slot]] = slot
+        self._fitness_valid = False
 
     def mutate3(self, count):
         """ Shuffling randomly between two points """
@@ -123,6 +141,7 @@ class Schedule(object):
             swap1 = random.randrange(self._n_slots - 1)
             swap2 = random.randrange(swap1, self._n_slots)
             self.shuffle_swap(self, swap1, swap2)
+        self._fitness_valid = False
 
 
 def swap_between(schedule_1, schedule_2, slot):
@@ -132,9 +151,11 @@ def swap_between(schedule_1, schedule_2, slot):
     for schedule in (schedule_1, schedule_2):
         if schedule.slots[slot] is not None:
             schedule.allocation_maps[schedule.slots[slot]] = slot
+    schedule_1._fitness_valid = False
+    schedule_2._fitness_valid = False
 
 
-def swap_chunk(self, cross_point_1, cross_point_2, schedule_1, schedule_2):
+def swap_chunk(cross_point_1, cross_point_2, schedule_1, schedule_2):
     """
     Swap the chunk of allocations between the two
     indices crossover1(slot1) & crossover2(slot2)
@@ -142,7 +163,6 @@ def swap_chunk(self, cross_point_1, cross_point_2, schedule_1, schedule_2):
 
     The parents are cloned to form the children.
     """
-
     child_1 = Schedule.from_Schedule(schedule_1)
     child_2 = Schedule.from_Schedule(schedule_2)
     cross_point_1, cross_point_2 = (
@@ -150,6 +170,8 @@ def swap_chunk(self, cross_point_1, cross_point_2, schedule_1, schedule_2):
         max(cross_point_1, cross_point_2))
     for slot_number in range(cross_point_1, cross_point_2 + 1):
             swap_between(child_1, child_2, slot_number)
+    schedule_1._fitness_valid = False
+    schedule_2._fitness_valid = False
     return child_1, child_2
 
 
@@ -160,7 +182,10 @@ def crossover(self, schedule_1, schedule_2, count):
     """
     cross_point_1 = random.randrange(self._n_slots)
     cross_point_2 = random.randrange(self._n_slots)
-    while ((cross_point_2 == cross_point_1) or (abs(cross_point_2 - cross_point_1) == abs(_n_slots - 1))):
+    while ((cross_point_2 == cross_point_1) or
+            (abs(cross_point_2 - cross_point_1) ==
+                abs(schedule_1._n_slots - 1))):
         cross_point_2 = random.randrange(self._n_slots)
-    
     swap_chunk(cross_point_1, cross_point_2, schedule_1, schedule_2)
+    schedule_1._fitness_valid = False
+    schedule_2._fitness_valid = False
