@@ -97,6 +97,7 @@ class MenubarHandlers(
         builder.get_object("preferences_window").show_all()
 
     def menubar__edit__preferences_ok(self, *args):
+        logger.debug("Saving preferences")
         builder = self.runtime_state.builder
         prefs = self.runtime_state.state.prefs
         n_days = int(builder.get_object(
@@ -120,13 +121,13 @@ class MenubarHandlers(
         population_size = int(builder.get_object(
             "preferences_window_population_spinbutton").props.value)
         del self.runtime_state.state.population[population_size:]
-        # TODO extend population by random seed
-        # self.runtime_state.population.extend()
         prefs.population_size = population_size
         prefs.mutate_counts = int(builder.get_object(
             "preferences_window_mutation_swaps_spinbutton").props.value)
         self.runtime_state.unsaved_changes = True
+        logger.debug("Saved preferences")
         builder.get_object("preferences_window").hide()
+        self.schedule__refresh()
 
     def menubar__edit__preferences_cancel(self, *args):
         self.runtime_state.builder.get_object("preferences_window").hide()

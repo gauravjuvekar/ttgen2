@@ -64,15 +64,18 @@ class GridHandler(gui.handlers.BaseHandlers):
         self.grid__redraw()
 
     def grid__redraw(self, *args):
+        logger.debug("Redrawing grid")
         self.grid__clear()
 
         store = self.runtime_state.builder.get_object("schedules_list_store")
         view = self.runtime_state.builder.get_object("schedules_tree_view")
         tree_iter = view.get_selection().get_selected()[1]
         if tree_iter is None:
+            logger.debug("No selected schedule to draw")
             return
 
         sched_index = store.get_value(tree_iter, 0)
+        logger.debug("Drawing schedule %s", sched_index)
         viewport = self.runtime_state.builder.get_object(
             "timetable_viewport")
         grid = Gtk.Grid()

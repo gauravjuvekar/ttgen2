@@ -17,10 +17,12 @@ class ScheduleHandlers(gui.handlers.BaseHandlers):
         logger.debug("Refreshing schedules")
         store = self.runtime_state.builder.get_object("schedules_list_store")
         view = self.runtime_state.builder.get_object("schedules_tree_view")
+        logger.debug("Unselecting schedules")
+        view.get_selection().unselect_all()
         store.clear()
         for i, schedule in enumerate(self.runtime_state.state.population):
             store.append([i] + liststore_row(schedule))
-        view.get_selection().unselect_all()
+        logger.debug("Refreshed schedules")
 
     def evolve(self, *args):
         logger.debug("Evolving")
