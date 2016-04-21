@@ -22,7 +22,9 @@ class SubjectHandlers(gui.handlers.BaseHandlers):
         self.runtime_state.state.subjects.append(subject)
         store = self.runtime_state.builder.get_object("subjects_list_store")
         view = self.runtime_state.builder.get_object("subjects_tree_view")
-        tree_iter = store.append(liststore_row(subject))
+        tree_iter = store.append(
+            [len(self.runtime_state.state.subjects) - 1] +
+            liststore_row(subject))
         view.get_selection().select_iter(tree_iter)
         self.runtime_state.unsaved_changes = True
         self.subject__add_cancel()
@@ -38,6 +40,6 @@ class SubjectHandlers(gui.handlers.BaseHandlers):
         store = self.runtime_state.builder.get_object("subjects_list_store")
         view = self.runtime_state.builder.get_object("subjects_tree_view")
         store.clear()
-        for subject in self.runtime_state.state.subjects:
-            store.append(liststore_row(subject))
+        for i, subject in enumerate(self.runtime_state.state.subjects):
+            store.append([i] + liststore_row(subject))
         view.get_selection().unselect_all()

@@ -42,6 +42,6 @@ class RoomHandlers(gui.handlers.BaseHandlers):
         store = self.runtime_state.builder.get_object("rooms_list_store")
         view = self.runtime_state.builder.get_object("rooms_tree_view")
         store.clear()
-        for room in self.runtime_state.state.rooms:
+        for i, room in enumerate(self.runtime_state.state.rooms):
             store.append(liststore_row(room))
         view.get_selection().unselect_all()

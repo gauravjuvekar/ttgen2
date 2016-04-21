@@ -4,6 +4,8 @@
   <requires lib="gtk+" version="3.10"/>
   <object class="GtkListStore" id="allocations_list_store">
     <columns>
+      <!-- column-name index -->
+      <column type="gint"/>
       <!-- column-name subject_name -->
       <column type="gchararray"/>
       <!-- column-name teacher_name -->
@@ -19,6 +21,8 @@
   </object>
   <object class="GtkListStore" id="batches_list_store">
     <columns>
+      <!-- column-name index -->
+      <column type="gint"/>
       <!-- column-name name -->
       <column type="gchararray"/>
       <!-- column-name heads -->
@@ -153,6 +157,8 @@
   </object>
   <object class="GtkListStore" id="subjects_list_store">
     <columns>
+      <!-- column-name index -->
+      <column type="gint"/>
       <!-- column-name name -->
       <column type="gchararray"/>
     </columns>
@@ -173,6 +179,8 @@
   </object>
   <object class="GtkListStore" id="teachers_list_store">
     <columns>
+      <!-- column-name index -->
+      <column type="gint"/>
       <!-- column-name name -->
       <column type="gchararray"/>
     </columns>
@@ -414,7 +422,7 @@
                                 <child>
                                   <object class="GtkCellRendererText" id="allocations_tree_view_column_subject_renderer"/>
                                   <attributes>
-                                    <attribute name="text">0</attribute>
+                                    <attribute name="text">1</attribute>
                                   </attributes>
                                 </child>
                               </object>
@@ -425,7 +433,7 @@
                                 <child>
                                   <object class="GtkCellRendererText" id="allocations_tree_view_column_teacher_renderer"/>
                                   <attributes>
-                                    <attribute name="text">1</attribute>
+                                    <attribute name="text">2</attribute>
                                   </attributes>
                                 </child>
                               </object>
@@ -436,7 +444,7 @@
                                 <child>
                                   <object class="GtkCellRendererText" id="allocations_tree_view_column_batch_renderer"/>
                                   <attributes>
-                                    <attribute name="text">2</attribute>
+                                    <attribute name="text">3</attribute>
                                   </attributes>
                                 </child>
                               </object>
@@ -519,7 +527,7 @@
                                 <child>
                                   <object class="GtkCellRendererText" id="teachers_tree_view_column_name_renderer"/>
                                   <attributes>
-                                    <attribute name="text">0</attribute>
+                                    <attribute name="text">1</attribute>
                                   </attributes>
                                 </child>
                               </object>
@@ -614,7 +622,7 @@
                                 <child>
                                   <object class="GtkCellRendererText" id="batches_tree_view_column_name_renderer"/>
                                   <attributes>
-                                    <attribute name="text">0</attribute>
+                                    <attribute name="text">1</attribute>
                                   </attributes>
                                 </child>
                               </object>
@@ -625,7 +633,7 @@
                                 <child>
                                   <object class="GtkCellRendererText" id="batches_tree_view_column_heads_renderer"/>
                                   <attributes>
-                                    <attribute name="text">1</attribute>
+                                    <attribute name="text">2</attribute>
                                   </attributes>
                                 </child>
                               </object>
@@ -667,7 +675,7 @@
                                 <child>
                                   <object class="GtkCellRendererText" id="subjects_tree_view_column_name_renderer"/>
                                   <attributes>
-                                    <attribute name="text">0</attribute>
+                                    <attribute name="text">1</attribute>
                                   </attributes>
                                 </child>
                               </object>

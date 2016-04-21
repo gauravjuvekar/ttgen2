@@ -22,7 +22,9 @@ class TeacherHandlers(gui.handlers.BaseHandlers):
         self.runtime_state.state.teachers.append(teacher)
         store = self.runtime_state.builder.get_object("teachers_list_store")
         view = self.runtime_state.builder.get_object("teachers_tree_view")
-        tree_iter = store.append(liststore_row(teacher))
+        tree_iter = store.append(
+            [len(self.runtime_state.state.teachers) - 1] +
+            liststore_row(teacher))
         view.get_selection().select_iter(tree_iter)
         self.runtime_state.unsaved_changes = True
         self.teacher__add_cancel()
@@ -38,6 +40,6 @@ class TeacherHandlers(gui.handlers.BaseHandlers):
         store = self.runtime_state.builder.get_object("teachers_list_store")
         view = self.runtime_state.builder.get_object("teachers_tree_view")
         store.clear()
-        for teacher in self.runtime_state.state.teachers:
-            store.append(liststore_row(teacher))
+        for i, teacher in enumerate(self.runtime_state.state.teachers):
+            store.append([i] + liststore_row(teacher))
         view.get_selection().unselect_all()

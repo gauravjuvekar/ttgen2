@@ -24,7 +24,9 @@ class BatchHandlers(gui.handlers.BaseHandlers):
         self.runtime_state.state.batches.append(batch)
         store = self.runtime_state.builder.get_object("batches_list_store")
         view = self.runtime_state.builder.get_object("batches_tree_view")
-        tree_iter = store.append(liststore_row(batch))
+        tree_iter = store.append(
+            [len(self.runtime_state.state.batches) - 1] +
+            liststore_row(batch))
         view.get_selection().select_iter(tree_iter)
         self.runtime_state.unsaved_changes = True
         self.batch__add_cancel()
@@ -40,6 +42,6 @@ class BatchHandlers(gui.handlers.BaseHandlers):
         store = self.runtime_state.builder.get_object("batches_list_store")
         view = self.runtime_state.builder.get_object("batches_tree_view")
         store.clear()
-        for batch in self.runtime_state.state.batches:
-            store.append(liststore_row(batch))
+        for i, batch in enumerate(self.runtime_state.state.batches):
+            store.append([i] + liststore_row(batch))
         view.get_selection().unselect_all()

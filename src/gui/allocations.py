@@ -53,7 +53,9 @@ class AllocationHandlers(gui.handlers.BaseHandlers):
                 "allocations_list_store")
             view = self.runtime_state.builder.get_object(
                 "allocations_tree_view")
-            tree_iter = store.append(liststore_row(allocation))
+            tree_iter = store.append(
+                [len(self.runtime_state.state.allocations) - 1] +
+                liststore_row(allocation))
             view.get_selection().select_iter(tree_iter)
             self.runtime_state.unsaved_changes = True
         self.allocation__add_cancel()
@@ -67,6 +69,6 @@ class AllocationHandlers(gui.handlers.BaseHandlers):
         store = self.runtime_state.builder.get_object("allocations_list_store")
         view = self.runtime_state.builder.get_object("allocations_tree_view")
         store.clear()
-        for allocation in self.runtime_state.state.allocations:
-            store.append(liststore_row(allocation))
+        for i, allocation in enumerate(self.runtime_state.state.allocations):
+            store.append([i] + liststore_row(allocation))
         view.get_selection().unselect_all()
