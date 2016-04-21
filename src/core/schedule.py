@@ -18,7 +18,7 @@ class Schedule(object):
         self._n_times = schedule._n_times
         self._n_slots = schedule._n_slots
         self.slots = multilist.MultiList(
-            schedule._n_rooms,
+            schedule._n_times,
             schedule._n_rooms,
             schedule.slots[:])
         self.allocations = schedule.allocations
@@ -262,6 +262,4 @@ def crossover(schedule_1, schedule_2):
     """
     cross_point_1 = random.randrange(schedule_1._n_slots - 1)
     cross_point_2 = random.randrange(cross_point_1 + 1, schedule_1._n_slots)
-    print "Crosspoints are: ", cross_point_1, " ", cross_point_2
     return swap_chunk(cross_point_1, cross_point_2, schedule_1, schedule_2)
-    #return swap_chunk(2, 10, schedule_1, schedule_2)
