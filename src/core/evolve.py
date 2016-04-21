@@ -9,16 +9,20 @@ def population_seed(state):
     Randomly seeds schedules to create a population.
     """
     total_population = state.prefs.population_size
+    logger.debug("Seeding to attain %s", total_population)
     del state.population[total_population:]
     extend_by = total_population - len(state.population)
-    state.population.extend([
+    logger.debug("Extending population by %s", extend_by)
+    extension = [
         schedule.Schedule(
             state.prefs.n_times,
             len(state.rooms),
             state.allocations) for
-        _ in range(extend_by)])
-    for sched in state.population:
+        _ in range(extend_by)]
+    logger.debug("Reseeding newer schedules")
+    for sched in extension:
         sched.seed_random()
+    state.population.extend(extension)
 
 
 def population_evolve(state, generations, fitness):
@@ -37,11 +41,26 @@ def population_evolve(state, generations, fitness):
         del state.population[-2]
         child1 = schedule.Schedule.from_Schedule(state.population[0])
         child2 = schedule.Schedule.from_Schedule(state.population[1])
-        child1, child2 = schedule.crossover(child1, child2)
+        logger.debug("Cloned parents")
+        logger.debug(
+            "count(None) in child1 %s", child1.slots._list.count(None))
+        logger.debug(
+            "count(None) in child2 %s", child2.slots._list.count(None))
+        schedule.crossover_two_point(child1, child2)
+        logger.debug("Crossed over")
+        logger.debug(
+            "count(None) in child1 %s", child1.slots._list.count(None))
+        logger.debug(
+            "count(None) in child2 %s", child2.slots._list.count(None))
         state.population.append(child1)
         state.population.append(child2)
-        state.population[-1].mutate2(state.prefs.mutate_counts)
-        state.population[-2].mutate2(state.prefs.mutate_counts)
+        state.population[-1].mutate(state.prefs.mutate_counts)
+        state.population[-2].mutate(state.prefs.mutate_counts)
+        logger.debug("Mutated")
+        logger.debug(
+            "count(None) in child1 %s", child1.slots._list.count(None))
+        logger.debug(
+            "count(None) in child2 %s", child2.slots._list.count(None))
         state.population.sort(reverse=True, key=lambda _: _.fitness)
         fittest_schedule = state.population[0]
         max_fitness = fittest_schedule.fitness
