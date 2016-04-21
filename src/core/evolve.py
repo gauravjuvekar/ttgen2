@@ -1,7 +1,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from core import schedule
+from core import schedule2
 
 
 def population_seed(state):
@@ -12,7 +12,7 @@ def population_seed(state):
     del state.population[total_population:]
     extend_by = total_population - len(state.population)
     state.population.extend([
-        schedule.Schedule(
+        schedule2.Schedule(
             state.prefs.n_times,
             len(state.rooms),
             state.allocations) for
@@ -35,13 +35,12 @@ def population_evolve(state, generations, fitness):
     while(max_fitness < fitness and elapsed_generations < generations):
         del state.population[-1]
         del state.population[-2]
-        child1, child2 = schedule.crossover(
-            state.population[0],
-            state.population[1])
+        child1, child2 = schedule2.Schedule.from_Schedule(state.population[0]), schedule2.Schedule.from_Schedule(state.population[1])
+        child1, child2 = schedule2.crossover(child1, child2)
         state.population.append(child1)
         state.population.append(child2)
-        state.population[-1].mutate()
-        state.population[-2].mutate()
+        state.population[-1].mutate2(state.prefs.mutate_counts)
+        state.population[-2].mutate2(state.prefs.mutate_counts)
         state.population.sort(reverse=True, key=lambda _: _.fitness)
         fittest_schedule = state.population[0]
         max_fitness = fittest_schedule.fitness

@@ -224,3 +224,44 @@ def crossover_two_point(schedule1, schedule2):
     point_1 = random.randrange(len(schedule1.allocations))
     point_2 = random.randrange(point_1, len(schedule1.allocations))
     swap_allocations(point_1, point_2, schedule1, schedule2)
+
+"""
+Testing old crossover
+"""
+def swap_between(schedule_1, schedule_2, slot):
+    schedule_1.slots[slot], schedule_2.slots[slot] = (
+        schedule_2.slots[slot],
+        schedule_1.slots[slot])
+    for schedule in (schedule_1, schedule_2):
+        if schedule.slots[slot] is not None:
+            schedule.allocation_maps[schedule.slots[slot]] = slot
+    return schedule_1, schedule_2
+
+def swap_chunk(cross_point_1, cross_point_2, schedule_1, schedule_2):
+    """
+    Swap the chunk of allocations between the two
+    indices crossover1(slot1) & crossover2(slot2)
+    of two parent allocations.
+
+    The parents are cloned to form the children.
+    """
+
+    child_1 = Schedule.from_Schedule(schedule_1)
+    child_2 = Schedule.from_Schedule(schedule_2)
+    cross_point_1, cross_point_2 = (
+        min(cross_point_1, cross_point_2),
+        max(cross_point_1, cross_point_2))
+    for slot_number in range(cross_point_1, cross_point_2 + 1):
+            child_1, child_2 = swap_between(child_1, child_2, slot_number)
+    return child_1, child_2
+
+def crossover(schedule_1, schedule_2):
+    """
+    Combine two parent allocations into two offsprings
+    by swapping randomly determined chunk.
+    """
+    cross_point_1 = random.randrange(schedule_1._n_slots - 1)
+    cross_point_2 = random.randrange(cross_point_1 + 1, schedule_1._n_slots)
+    print "Crosspoints are: ", cross_point_1, " ", cross_point_2
+    return swap_chunk(cross_point_1, cross_point_2, schedule_1, schedule_2)
+    #return swap_chunk(2, 10, schedule_1, schedule_2)
