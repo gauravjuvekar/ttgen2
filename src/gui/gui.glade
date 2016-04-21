@@ -468,7 +468,7 @@
                             <property name="level_indentation">1</property>
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="schedules_tree_selection">
-                                <signal name="changed" handler="schedule__redraw" swapped="no"/>
+                                <signal name="changed" handler="grid__redraw" swapped="no"/>
                               </object>
                             </child>
                             <child>

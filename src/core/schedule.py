@@ -2,6 +2,9 @@
 import random
 from collections import namedtuple
 
+import logging
+logger = logging.getLogger(__name__)
+
 from core import multilist
 
 
@@ -69,6 +72,9 @@ class Schedule(object):
                 fitness += batch_clashes * penalties['clash_time_batch']
             self._fitness = fitness
             self._fitness_valid = True
+            logger.debug("Fitness recalculated to %s", self._fitness)
+        else:
+            logger.debug("Fitness already cached (%s)", self._fitness)
         return self._fitness
 
     @fitness.setter
@@ -94,6 +100,15 @@ class Schedule(object):
             time=(slot // self._n_rooms),
             room=(slot % self._n_rooms))
 
+    def slot_int(self, slot):
+        """
+        Gives the integer index for a tuple of (time, room)
+        """
+        if isinstance(slot, tuple):
+            return slot[0] * self._n_rooms + slot[1]
+        else:
+            return slot
+
     def swap(self, slot1, slot2):
         """
         Swaps the allocations between two slots
@@ -103,7 +118,7 @@ class Schedule(object):
             self.slots[slot1])
         for slot in (slot1, slot2):
             if self.slots[slot] is not None:
-                self.allocation_maps[self.slots[slot]] = slot
+                self.allocation_maps[self.slots[slot]] = self.slot_int(slot)
         self._fitness_valid = False
 
     def mutate(self, count):

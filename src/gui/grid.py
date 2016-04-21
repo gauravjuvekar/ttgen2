@@ -16,9 +16,10 @@ class TransparentButton(Gtk.Button):
 
 
 class DndButton(TransparentButton):
-    def __init__(self, text, grid_pos):
+    def __init__(self, text, grid_pos, callback_obj):
         TransparentButton.__init__(self, text)
         self.grid_pos = grid_pos
+        self.callback_obj = callback_obj
         self.drag_source_set(Gdk.ModifierType.BUTTON1_MASK, [],
                              Gdk.DragAction.COPY)
         self.drag_dest_set(Gtk.DestDefaults.ALL, [],
@@ -29,26 +30,51 @@ class DndButton(TransparentButton):
         self.drag_source_add_text_targets()
 
     def do_drag_data_get(self, context, selection, *args):
-        print("Drag from", repr(self.grid_pos))
-        selection.set_text(repr(self.grid_pos), -1)
+        send = repr(self.grid_pos)
+        logger.debug("Drag from %s", send)
+        selection.set_text(send, -1)
 
     def do_drag_data_received(self, context, x, y, selection, *args):
-        print("Drag to", self.grid_pos, "from", selection.get_text())
+        src = eval(selection.get_text())
+        dst = self.grid_pos
+        logger.debug("Drag to %s from %s", dst, src)
+        self.callback_obj.grid__dnd(src, dst)
 
 
-class GridHandler(
-        gui.subjects.SubjectHandlers,
-        gui.rooms.RoomHandlers,
-        gui.teachers.TeacherHandlers,
-        gui.batches.BatchHandlers,
-        gui.allocations.AllocationHandlers,
-        gui.handlers.BaseHandlers):
-    def show_tt_win(self, sched_index, *args):
-        builder = self.runtime_state.builder
-        tt_viewport = builder.get_object("timetable_viewport")
-        grid = builder.get_object("timetable_viewport").get_child()
+class GridHandler(gui.handlers.BaseHandlers):
+    def grid__clear(self, *args):
+        grid = self.runtime_state.builder.get_object(
+            "timetable_viewport").get_child()
         if(grid is not None):
             grid.destroy()
+
+    def grid__dnd(self, src, dst, *args):
+        store = self.runtime_state.builder.get_object("schedules_list_store")
+        view = self.runtime_state.builder.get_object("schedules_tree_view")
+        tree_iter = view.get_selection().get_selected()[1]
+        if tree_iter is None:
+            raise RuntimeError("Schedule must be selected for dnd to occur")
+        sched_index = store.get_value(tree_iter, 0)
+        sched = self.runtime_state.state.population[sched_index]
+        sched.swap(src, dst)
+        # Column 1 is the fitness column
+        new_model_fitness = gui.schedules.liststore_row(sched)[0]
+        logger.debug("Post user swap fitness %s", new_model_fitness)
+        store.set_value(tree_iter, 1, new_model_fitness)
+        self.grid__redraw()
+
+    def grid__redraw(self, *args):
+        self.grid__clear()
+
+        store = self.runtime_state.builder.get_object("schedules_list_store")
+        view = self.runtime_state.builder.get_object("schedules_tree_view")
+        tree_iter = view.get_selection().get_selected()[1]
+        if tree_iter is None:
+            return
+
+        sched_index = store.get_value(tree_iter, 0)
+        viewport = self.runtime_state.builder.get_object(
+            "timetable_viewport")
         grid = Gtk.Grid()
         grid.set_column_homogeneous(True)
         grid.set_row_homogeneous(True)
@@ -72,12 +98,12 @@ class GridHandler(
         for time in range(0, schedule._n_times):
             for room in range(0, schedule._n_rooms):
                 if (schedule.slots[(time, room)] is None):
-                    text = "-"
+                    text = ""
                 else:
                     text = str(schedule.slots[(time, room)])
                 grid.attach(
-                    DndButton(text, (time, room)),
+                    DndButton(text, (time, room), self),
                     time + 1, room + 2,
                     1, 1)
-        tt_viewport.add(grid)
-        tt_viewport.show_all()
+        viewport.add(grid)
+        viewport.show_all()

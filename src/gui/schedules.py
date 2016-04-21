@@ -9,7 +9,7 @@ import core
 
 
 def liststore_row(schedule):
-    return [schedule._fitness]
+    return [schedule.fitness]
 
 
 class ScheduleHandlers(gui.handlers.BaseHandlers):
@@ -21,14 +21,6 @@ class ScheduleHandlers(gui.handlers.BaseHandlers):
         for i, schedule in enumerate(self.runtime_state.state.population):
             store.append([i] + liststore_row(schedule))
         view.get_selection().unselect_all()
-
-    def schedule__redraw(self, *args):
-        store = self.runtime_state.builder.get_object("schedules_list_store")
-        view = self.runtime_state.builder.get_object("schedules_tree_view")
-        tree_iter = view.get_selection().get_selected()[1]
-        if tree_iter is not None:
-            sched_index = store.get_value(tree_iter, 0)
-            self.show_tt_win(sched_index)
 
     def evolve(self, *args):
         logger.debug("Evolving")
