@@ -64,3 +64,6 @@ target/
 # Tags
 tags
 *.tag_hl
+*~
+*.swp
+*.swo

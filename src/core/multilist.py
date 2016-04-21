@@ -19,6 +19,9 @@ class MultiList(object):
     def __str__(self):
         return str(self._list)
 
+    def __len__(self):
+        return len(self._list)
+
     def _slice_from_tuple(self, tup):
         """
         Gives a slice [int * self.xlen:(int + 1) * self.xlen] from (int, None)
