@@ -6,6 +6,6 @@ from . import rooms
 from . import batches
 from . import schedules
 from . import notebook
-from . import exp
+from . import grid
 from . import menubar
 from . import file_save
