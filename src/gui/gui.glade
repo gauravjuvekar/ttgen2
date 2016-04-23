@@ -2,6 +2,9 @@
 <!-- Generated with glade 3.16.1 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
+  <object class="GtkActionGroup" id="actiongroup1"/>
+  <object class="GtkActionGroup" id="actiongroup2"/>
+  <object class="GtkActionGroup" id="actiongroup3"/>
   <object class="GtkListStore" id="allocations_list_store">
     <columns>
       <!-- column-name index -->
@@ -29,10 +32,18 @@
       <column type="gint"/>
     </columns>
   </object>
-  <object class="GtkComboBox" id="batches_add_window_parent_combobox">
+  <object class="GtkComboBox" id="table_view_filter_batch">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="model">batches_list_store</property>
+    <property name="active">0</property>
+    <signal name="changed" handler="grid__redraw" swapped="no"/>
+    <child>
+      <object class="GtkCellRendererText" id="table_view_filter_batch_cellrenderer"/>
+      <attributes>
+        <attribute name="text">1</attribute>
+      </attributes>
+    </child>
   </object>
   <object class="GtkDialog" id="infeasibly_many_allocations_dialog">
     <property name="can_focus">False</property>
@@ -146,6 +157,19 @@
       <!-- column-name capacity -->
       <column type="gint"/>
     </columns>
+  </object>
+  <object class="GtkComboBox" id="table_view_filter_room">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="model">rooms_list_store</property>
+    <property name="active">0</property>
+    <signal name="changed" handler="grid__redraw" swapped="no"/>
+    <child>
+      <object class="GtkCellRendererText" id="table_view_filter_room_cellrenderer"/>
+      <attributes>
+        <attribute name="text">1</attribute>
+      </attributes>
+    </child>
   </object>
   <object class="GtkListStore" id="schedules_list_store">
     <columns>
@@ -745,6 +769,7 @@
                                   <item id="2" translatable="yes">By room</item>
                                   <item id="3" translatable="yes">By batch</item>
                                 </items>
+                                <signal name="changed" handler="grid__type_change" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -753,9 +778,10 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkComboBox" id="table_view_filter_item_selection_combobox">
+                              <object class="GtkComboBox" id="table_view_filter_all_placeholder_combobox">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="button_sensitivity">off</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -1844,6 +1870,19 @@ room capacity</property>
           </packing>
         </child>
       </object>
+    </child>
+  </object>
+  <object class="GtkComboBox" id="table_view_filter_teacher">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="model">teachers_list_store</property>
+    <property name="active">0</property>
+    <signal name="changed" handler="grid__redraw" swapped="no"/>
+    <child>
+      <object class="GtkCellRendererText" id="table_view_filter_teacher_cellrenderer"/>
+      <attributes>
+        <attribute name="text">1</attribute>
+      </attributes>
     </child>
   </object>
   <object class="GtkDialog" id="unsaved_changes_dialog">
