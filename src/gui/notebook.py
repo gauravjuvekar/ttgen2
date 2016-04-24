@@ -47,6 +47,8 @@ class NotebookHandlers(
             self.runtime_state.builder.get_object(
                 "notebook").get_current_page())
         self.notebook__remove_cb[current_tab](self)
+        self.notebook__refresh()
+        self.runtime_state.unsaved_changes = True
 
     def notebook__add(self, *args):
         current_tab = Tabs(
@@ -65,11 +67,11 @@ class NotebookHandlers(
 
         del self.runtime_state.state.allocations[index]
     
-        del self.runtime_state.Population[:]
+        del self.runtime_state.state.Population[:]
 
     def notebook__remove_schedule(self, *args):
         print("removing schedule")
-        del self.runtime_state.Population[:]
+        del self.runtime_state.state.Population[:]
 
     def notebook__remove_teacher(self, *args):
         print("removing teacher")
@@ -84,7 +86,7 @@ class NotebookHandlers(
     
         self.runtime_state.state.allocations = [x for x in self.runtime_state.allocations if x.teachers != teach]
 
-        del self.runtime_state.Population[:]
+        del self.runtime_state.state.Population[:]
 
 
     def notebook__remove_batch(self, *args):
@@ -100,7 +102,7 @@ class NotebookHandlers(
     
         self.runtime_state.state.allocations = [x for x in self.runtime_state.allocations if x.batches != batch]
 
-        del self.runtime_state.Population[:]
+        del self.runtime_state.state.Population[:]
 
     def notebook__remove_subject(self, *args):
         print("removing subject")
@@ -115,7 +117,7 @@ class NotebookHandlers(
     
         self.runtime_state.state.allocations = [x for x in self.runtime_state.allocations if x.subjects != sub]
 
-        del self.runtime_state.Population[:]
+        del self.runtime_state.state.Population[:]
 
 
     def notebook__remove_room(self, *args):
@@ -129,7 +131,7 @@ class NotebookHandlers(
 
         del self.runtime_state.state.rooms[index]
     
-        del self.runtime_state.Population[:]
+        del self.runtime_state.state.Population[:]
 
     def notebook__add_allocation(self, *args):
         self.runtime_state.builder.get_object(
