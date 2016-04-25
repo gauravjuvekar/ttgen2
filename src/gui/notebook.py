@@ -47,6 +47,9 @@ class NotebookHandlers(
             self.runtime_state.builder.get_object(
                 "notebook").get_current_page())
         self.notebook__remove_cb[current_tab](self)
+        del self.runtime_state.state.population[:]
+        self.notebook__refresh()
+        self.runtime_state.unsaved_changes = True
 
     def notebook__add(self, *args):
         current_tab = Tabs(
@@ -55,81 +58,71 @@ class NotebookHandlers(
         self.notebook__add_cb[current_tab](self)
 
     def notebook__remove_allocation(self, *args):
-        print("removing allocation")
-        store = self.runtime_state.builder.get_object("allocation_list_store")
-        view = self.runtime_state.builder.get_object("allocation_tree_veiw")
-        tree_iter = veiw.get_selection().get_selected()[1]
-    
-        index = store.get_value(tree_iter, 0)
-        alloc = self.runtime_state.state.allocations[index]
-
-        del self.runtime_state.state.allocations[index]
-    
-        del self.runtime_state.Population[:]
+        store = self.runtime_state.builder.get_object("allocations_list_store")
+        view = self.runtime_state.builder.get_object("allocations_tree_view")
+        tree_iter = view.get_selection().get_selected()[1]
+        if tree_iter is None:
+            return
+        else:
+            index = store.get_value(tree_iter, 0)
+            del self.runtime_state.state.allocations[index]
 
     def notebook__remove_schedule(self, *args):
-        print("removing schedule")
-        del self.runtime_state.Population[:]
+        pass
 
     def notebook__remove_teacher(self, *args):
-        print("removing teacher")
-        store = self.runtime_state.builder.get_object("teacher_list_store")
-        view = self.runtime_state.builder.get_object("teacher_tree_veiw")
-        tree_iter = veiw.get_selection().get_selected()[1]
-    
-        index = store.get_value(tree_iter, 0)
-        teach = self.runtime_state.state.teachers[index]
-
-        del self.runtime_state.state.teachers[index]
-    
-        self.runtime_state.state.allocations = [x for x in self.runtime_state.allocations if x.teachers != teach]
-
-        del self.runtime_state.Population[:]
-
+        store = self.runtime_state.builder.get_object("teachers_list_store")
+        view = self.runtime_state.builder.get_object("teachers_tree_view")
+        tree_iter = view.get_selection().get_selected()[1]
+        if tree_iter is None:
+            return
+        else:
+            index = store.get_value(tree_iter, 0)
+            teach = self.runtime_state.state.teachers[index]
+            del self.runtime_state.state.teachers[index]
+            self.runtime_state.state.allocations = [
+                x for x in self.runtime_state.state.allocations if
+                x.teacher != teach]
 
     def notebook__remove_batch(self, *args):
-        print("removing batch")
-        store = self.runtime_state.builder.get_object("batch_list_store")
-        view = self.runtime_state.builder.get_object("batch_tree_veiw")
-        tree_iter = veiw.get_selection().get_selected()[1]
-    
-        index = store.get_value(tree_iter, 0)
-        batch = self.runtime_state.state.batches[index]
-
-        del self.runtime_state.state.batches[index]
-    
-        self.runtime_state.state.allocations = [x for x in self.runtime_state.allocations if x.batches != batch]
-
-        del self.runtime_state.Population[:]
+        store = self.runtime_state.builder.get_object("batches_list_store")
+        view = self.runtime_state.builder.get_object("batches_tree_view")
+        tree_iter = view.get_selection().get_selected()[1]
+        if tree_iter is None:
+            return
+        else:
+            index = store.get_value(tree_iter, 0)
+            batch = self.runtime_state.state.batches[index]
+            del self.runtime_state.state.batches[index]
+            self.runtime_state.state.allocations = [
+                x for x in self.runtime_state.state.allocations if
+                x.batch != batch]
 
     def notebook__remove_subject(self, *args):
-        print("removing subject")
-        store = self.runtime_state.builder.get_object("subject_list_store")
-        view = self.runtime_state.builder.get_object("subject_tree_veiw")
-        tree_iter = veiw.get_selection().get_selected()[1]
-    
-        index = store.get_value(tree_iter, 0)
-        sub = self.runtime_state.state.subjects[index]
-
-        del self.runtime_state.state.subjects[index]
-    
-        self.runtime_state.state.allocations = [x for x in self.runtime_state.allocations if x.subjects != sub]
-
-        del self.runtime_state.Population[:]
-
+        store = self.runtime_state.builder.get_object("subjects_list_store")
+        view = self.runtime_state.builder.get_object("subjects_tree_view")
+        tree_iter = view.get_selection().get_selected()[1]
+        if tree_iter is None:
+            return
+        else:
+            index = store.get_value(tree_iter, 0)
+            sub = self.runtime_state.state.subjects[index]
+            del self.runtime_state.state.subjects[index]
+            self.runtime_state.state.allocations = [
+                x for x in self.runtime_state.state.allocations if
+                x.subject != sub]
 
     def notebook__remove_room(self, *args):
-        print("removing room")
-        store = self.runtime_state.builder.get_object("room_list_store")
-        view = self.runtime_state.builder.get_object("room_tree_veiw")
-        tree_iter = veiw.get_selection().get_selected()[1]
-    
-        index = store.get_value(tree_iter, 0)
-        room = self.runtime_state.state.rooms[index]
-
-        del self.runtime_state.state.rooms[index]
-    
-        del self.runtime_state.Population[:]
+        store = self.runtime_state.builder.get_object("rooms_list_store")
+        view = self.runtime_state.builder.get_object("rooms_tree_view")
+        tree_iter = view.get_selection().get_selected()[1]
+        if tree_iter is None:
+            return
+        else:
+            index = store.get_value(tree_iter, 0)
+            del self.runtime_state.state.rooms[index]
+            for i, room in enumerate(self.runtime_state.state.rooms):
+                room.pk = i
 
     def notebook__add_allocation(self, *args):
         self.runtime_state.builder.get_object(
@@ -155,7 +148,7 @@ class NotebookHandlers(
     def notebook__add_subject(self, *args):
         self.runtime_state.builder.get_object(
             "subjects_add_window").show_all()
-    
+
     notebook__remove_cb = {
         Tabs.ALLOCATIONS: notebook__remove_allocation,
         Tabs.SCHEDULES: notebook__remove_schedule,

@@ -2,9 +2,6 @@
 <!-- Generated with glade 3.16.1 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
-  <object class="GtkActionGroup" id="actiongroup1"/>
-  <object class="GtkActionGroup" id="actiongroup2"/>
-  <object class="GtkActionGroup" id="actiongroup3"/>
   <object class="GtkListStore" id="allocations_list_store">
     <columns>
       <!-- column-name index -->
@@ -85,7 +82,7 @@
             <property name="can_focus">False</property>
             <property name="xpad">6</property>
             <property name="ypad">6</property>
-            <property name="label" translatable="yes">Enough slots will not be left for all allocations. Increase time slots from preferences or add more rooms.</property>
+            <property name="label" translatable="yes">Enough slots are not available for all allocations. Increase time slots from preferences or add more rooms.</property>
             <property name="wrap">True</property>
           </object>
           <packing>

@@ -65,7 +65,7 @@ def main():
 
 
 if __name__ == "__main__":
-    log_level = logging.WARNING
+    log_level = logging.DEBUG
     format_str = "{levelname:8s} {asctime} {name}"
     format_str += ": {message}"
 
