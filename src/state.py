@@ -5,7 +5,8 @@ class Prefs(object):
     def __init__(self):
         self.penalties = {
             'clash_time_teacher': -1000,
-            'clash_time_batch': -1000}
+            'clash_time_batch': -1000,
+            'room_capacity': -500}
         self._n_days = 6
         self._n_times_per_day = 8
         self.n_times = self._n_days * self._n_times_per_day

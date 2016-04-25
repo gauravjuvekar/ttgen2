@@ -17,7 +17,7 @@ def population_seed(state):
         schedule.Schedule(
             state.prefs.n_times,
             len(state.rooms),
-            state.allocations) for
+            state) for
         _ in range(extend_by)]
     logger.debug("Reseeding newer schedules")
     for sched in extension:

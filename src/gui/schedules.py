@@ -18,8 +18,8 @@ class ScheduleHandlers(gui.handlers.BaseHandlers):
         store = self.runtime_state.builder.get_object("schedules_list_store")
         view = self.runtime_state.builder.get_object("schedules_tree_view")
         logger.debug("Unselecting schedules")
-        store.clear()
         view.get_selection().unselect_all()
+        store.clear()
         for i, schedule in enumerate(self.runtime_state.state.population):
             store.append([i] + liststore_row(schedule))
         logger.debug("Refreshed schedules")

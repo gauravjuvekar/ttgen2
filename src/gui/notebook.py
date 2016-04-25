@@ -68,7 +68,7 @@ class NotebookHandlers(
             del self.runtime_state.state.allocations[index]
 
     def notebook__remove_schedule(self, *args):
-        pass
+        raise RuntimeError("Schedule should not be removable from GUI")
 
     def notebook__remove_teacher(self, *args):
         store = self.runtime_state.builder.get_object("teachers_list_store")

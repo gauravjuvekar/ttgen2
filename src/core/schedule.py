@@ -25,36 +25,34 @@ class Schedule(object):
             schedule._n_times,
             schedule.slots[:])
         assert self.slots._list == schedule.slots._list
-        self.allocations = schedule.allocations
+        self.state = schedule.state
         self.allocation_maps = schedule.allocation_maps.copy()
         self._fitness = schedule._fitness
         self._fitness_valid = schedule._fitness_valid
         return self
 
-    def __init__(self, n_times, n_rooms, allocations):
-        if n_times * n_rooms < len(allocations):
+    def __init__(self, n_times, n_rooms, state):
+        if n_times * n_rooms < len(state.allocations):
             raise Exception("Too few slots")
         self._n_rooms = n_rooms
         self._n_times = n_times
         self._n_slots = n_times * n_rooms
         self.slots = multilist.MultiList(n_rooms, n_times)
-        self.allocations = allocations
+        self.state = state
         self.allocation_maps = dict()
         self._fitness = None
         self._fitness_valid = False
 
     @property
-    def fitness(self):
+    def fitness(self,):
         if not self._fitness_valid:
-            penalties = dict()
-            penalties['clash_time_teacher'] = -1000
-            penalties['clash_time_batch'] = -1000
             fitness = 0
             # teacher time clashes
+            room_capacity_overflow = 0
             for time_slot in self.slots[(None, None): (None, None)]:
                 teachers = dict()
                 batches = dict()
-                for allocation in time_slot:
+                for room, allocation in enumerate(time_slot):
                     if allocation is not None:
                         try:
                             teachers[allocation.teacher] += 1
@@ -64,12 +62,24 @@ class Schedule(object):
                             batches[allocation.batch] += 1
                         except KeyError:
                             batches[allocation.batch] = 1
+                        diff_capacity = (
+                            allocation.batch.n_students -
+                            self.state.rooms[room].capacity)
+                        if diff_capacity > 0:
+                            room_capacity_overflow += diff_capacity
                 teacher_clashes = sum((
                     (count - 1) for count in teachers.values() if count > 1))
-                fitness += teacher_clashes * penalties['clash_time_teacher']
+                fitness += (
+                    teacher_clashes *
+                    self.state.prefs.penalties['clash_time_teacher'])
                 batch_clashes = sum((
                     (count - 1) for count in batches.values() if count > 1))
-                fitness += batch_clashes * penalties['clash_time_batch']
+                fitness += (
+                    batch_clashes *
+                    self.state.prefs.penalties['clash_time_batch'])
+            fitness += (
+                room_capacity_overflow *
+                self.state.prefs.penalties['room_capacity'])
             self._fitness = fitness
             self._fitness_valid = True
             logger.debug("Fitness recalculated to %s", self._fitness)
@@ -87,7 +97,7 @@ class Schedule(object):
         """
         choices = list(range(self._n_slots))
         random.shuffle(choices)
-        for alloc, slot in zip(self.allocations, choices):
+        for alloc, slot in zip(self.state.allocations, choices):
             self.slots[slot] = alloc
             self.allocation_maps[alloc] = slot
         self._fitness_valid = False
@@ -164,11 +174,11 @@ def swap_allocations(point_1, point_2, schedule1, schedule2):
     The parents are cloned to form the children.
     """
     for alloc in range(point_1, point_2):
-        alloc = schedule1.allocations[alloc]
+        alloc = schedule1.state.allocations[alloc]
         schedule1.slots[schedule1.allocation_maps[alloc]] = None
         schedule2.slots[schedule2.allocation_maps[alloc]] = None
     for alloc in range(point_1, point_2):
-        alloc = schedule1.allocations[alloc]
+        alloc = schedule1.state.allocations[alloc]
         schedule1.allocation_maps[alloc], schedule2.allocation_maps[alloc] = (
             schedule1.closest_vacant(schedule2.allocation_maps[alloc]),
             schedule2.closest_vacant(schedule1.allocation_maps[alloc]))
@@ -183,6 +193,6 @@ def crossover_two_point(schedule1, schedule2):
     The schedules will be modified
     Clone them separately first
     """
-    point_1 = random.randrange(len(schedule1.allocations))
-    point_2 = random.randrange(point_1, len(schedule1.allocations))
+    point_1 = random.randrange(len(schedule1.state.allocations))
+    point_2 = random.randrange(point_1, len(schedule1.state.allocations))
     swap_allocations(point_1, point_2, schedule1, schedule2)

@@ -89,6 +89,10 @@ class MenubarHandlers(
             "time_clash_batch_spinbutton").props.value = (
             prefs.penalties['clash_time_batch'])
         builder.get_object(
+            "preferences_window_fitness_penalty_" +
+            "room_capacity_spinbutton").props.value = (
+            prefs.penalties['room_capacity'])
+        builder.get_object(
             "preferences_window_population_spinbutton").props.value = (
             prefs.population_size)
         builder.get_object(
@@ -118,6 +122,9 @@ class MenubarHandlers(
         prefs.penalties['clash_time_batch'] = builder.get_object(
             "preferences_window_fitness_penalty_" +
             "time_clash_batch_spinbutton").props.value
+        prefs.penalties['room_capacity'] = builder.get_object(
+            "preferences_window_fitness_penalty_" +
+            "room_capacity_spinbutton").props.value
         population_size = int(builder.get_object(
             "preferences_window_population_spinbutton").props.value)
         del self.runtime_state.state.population[population_size:]

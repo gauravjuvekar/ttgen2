@@ -108,7 +108,11 @@ class GridHandler(gui.handlers.BaseHandlers):
             return
 
         sched_index = store.get_value(tree_iter, 0)
-        schedule = self.runtime_state.state.population[sched_index]
+        try:
+            schedule = self.runtime_state.state.population[sched_index]
+        except IndexError:
+            logger.warning("Cannot access schedule %s", sched_index)
+            return
 
         draw_type = GridViewFilterType(
             self.runtime_state.builder.get_object(
