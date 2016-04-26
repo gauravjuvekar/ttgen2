@@ -138,3 +138,8 @@ class MenubarHandlers(
 
     def menubar__edit__preferences_cancel(self, *args):
         self.runtime_state.builder.get_object("preferences_window").hide()
+
+    def menubar__help_about(self, *args):
+        dialog = self.runtime_state.builder.get_object("about_dialog")
+        dialog.run()
+        dialog.hide()
