@@ -28,10 +28,14 @@ class NotebookHandlers(
     def notebook__switch_page(self, notebook, page, page_num, *args):
         add_button = self.runtime_state.builder.get_object(
             "notebook_add_button")
+        remove_button = self.runtime_state.builder.get_object(
+            "notebook_remove_button")
         if page_num == Tabs.SCHEDULES:
             add_button.set_sensitive(False)
+            remove_button.set_sensitive(False)
         else:
             add_button.set_sensitive(True)
+            remove_button.set_sensitive(True)
 
     def notebook__refresh(self, *args):
         logger.debug("Refreshing all notebooks")
